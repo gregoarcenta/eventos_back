@@ -6,7 +6,7 @@ const www = process.env.WWW || './';
 app.use(express.static(www));
 console.log(`serving ${www}`);
 
-app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/', express.static(path.join(__dirname, 'public')))
 
 // app.get('*', (req, res) => {
 //   res.sendFile(`index.html`, { root: www });
