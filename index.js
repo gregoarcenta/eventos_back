@@ -1,12 +1,19 @@
+// Global Imports
 const express = require("express");
 const path = require("path");
+require("dotenv").config();
 
 // Imports routes
 const sessions = require("./routes/sessions.routes");
+// Imports database
+const { connect } = require("./config/db");
 
 // Configuration
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
+
+// Connect Database
+connect()
 
 // app.get('*', (req, res) => {
 //   res.sendFile(`index.html`, { root: www });
