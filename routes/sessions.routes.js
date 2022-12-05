@@ -1,5 +1,6 @@
 const express = require("express");
 const sessionsController = require("../app/controllers/sessionsController");
+const userController = require("../app/controllers/userController");
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router
   .route("/renew")
   .get(
     sessionsController.validToken,
-    // UsersController.find,
+    userController.find,
     sessionsController.generateToken,
     sessionsController.sendToken
   );

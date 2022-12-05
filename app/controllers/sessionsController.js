@@ -1,62 +1,59 @@
-// const jwt = require('jsonwebtoken')
-// const bcrypt = require('bcrypt')
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+require("dotenv").config();
 
-// const secrets = require('../config/secrets')
-// const User = require('../models/User')
-// const Role = require('../models/Role')
-// const Teacher = require('../models/Teacher')
-// const { jwtSecret } = require('../config/secrets')
+const Role = require("../models/Role");
+const User = require("../models/User");
 
 async function authenticate(req, res, next) {
-  /* const username = req.body.username
-    const password = req.body.password
-    let match
-    try {
-        const user = await User.findOne({ where: { username }, include: [Role, Teacher] })
-        if (user) match = await bcrypt.compare(password, user.password)
-        if (match) {
-            req.user = user
-            next()
-        } else {
-            next(new Error('Invalid Credentials'))
-        }
-    } catch (error) {
-        next(new Error(error))
-    } */
+  const username = req.body.username;
+  const password = req.body.password;
+  let match = null;
+  try {
+    const user = await User.findOne({ where: { username }, include: [Role] });
+    if (user) match = await bcrypt.compare(password, user.password);
+    if (!match) throw new Error("Invalid Credentials");
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
 
 function generateToken(req, res, next) {
-  /*  if (!req.user) return next()
-    req.token = jwt.sign({ id: req.user.id, role: req.user.Role.nameRol }, secrets.jwtSecret)
-    next() */
-    next()
+  if (!req.user) return next();
+  req.token = jwt.sign(
+    { id: req.user.id, role: req.user.role.name },
+    process.env.JWT_SECRET
+  );
+  next();
 }
 
-function sendToken(req, res) {
-  /* if (req.user && req.token) {
-        res.json({
-            user: req.user,
-            jwt: req.token
-        })
-    } else {
-        res.status(422).json({
-            error: 'Could not create user'
-        })
-    } */
-    res.status(300).json({respuesta:'hola mundo'})
+function sendToken(req, res, next) {
+  try {
+    if (!req.user || !req.token) {
+      res.status(422);
+      throw new Error("Could not get user");
+    }
+    res.json({
+      user: req.user,
+      jwt: req.token,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 function validToken(req, res, next) {
-  /* let token = (req.headers.authorization).split(' ')
-    try {
-        if (!token) throw new Error('Error Token not exists')
-        const { id } = jwt.verify(token[1], jwtSecret)
-        req.idUser = id
-        next()
-    } catch (error) {
-        next(error)
-    } */
-  next();
+  try {
+    if (!req.headers.authorization) throw new Error("Token not found");
+    const token = req.headers.authorization.split(" ");
+    const { id } = jwt.verify(token[1], process.env.JWT_SECRET);
+    req.idUser = id;
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
