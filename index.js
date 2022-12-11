@@ -1,6 +1,6 @@
 // Global Imports
 const express = require("express");
-// const path = require("path");
+const { expressjwt } = require("express-jwt");
 require("dotenv").config();
 
 // Import connect database
@@ -11,7 +11,6 @@ require("./config/associations");
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
-
 
 // Configuration
 const app = express();
@@ -24,7 +23,11 @@ syncTables();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use('/', express.static(path.join(__dirname, 'public')))
+app.use(
+  expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] }).unless({
+    path: ["/login", "/register"],
+  })
+);
 
 // Routes
 app.use("/login", sessions);

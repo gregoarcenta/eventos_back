@@ -32,6 +32,26 @@ User.init(
       allowNull: false,
       unique:true,
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    status:{
+      type: DataTypes.BOOLEAN,
+      defaultValue:true
+    },
+    google:{
+      type: DataTypes.BOOLEAN,
+      defaultValue:false
+    },
+    email_verif:{
+      type: DataTypes.BOOLEAN,
+      defaultValue:false
+    },
+    num_document: {
+      type: DataTypes.INTEGER,
+      unique:true
+    },
     img: {
       type: DataTypes.STRING,
     },
@@ -40,13 +60,6 @@ User.init(
     },
     phone: {
       type: DataTypes.INTEGER,
-    },
-    num_document: {
-      type: DataTypes.INTEGER,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
     }
   },
   {

@@ -64,7 +64,7 @@ const syncTables = async () => {
     if (usuario.length === 0) {
       const hash = await bcrypt.hash("admin", 10);
       await db.query(
-        "INSERT INTO users ( id, name, surname, username, img, age, phone, email, password, num_document, document_id, created_at, updated_at, role_id) VALUES (1, 'ALEX', 'ARCENTALES', 'aarcentales', NULL, 25, NULL, 'aarcentales@gmail.com', :password, NULL, NULL, :date, :date, 1)",
+        "INSERT INTO users ( name, surname, username, email, password, email_verif, created_at, updated_at, role_id) VALUES ('ALEX', 'ARCENTALES', 'aarcentales', 'aarcentales@gmail.com', :password, true, :date, :date, 1)",
         {
           replacements: { password: hash, date: new Date() },
           type: QueryTypes.INSERT,

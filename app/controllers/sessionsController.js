@@ -1,23 +1,35 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { response } = require("../middlewares/response");
+const { Op } = require("sequelize");
 require("dotenv").config();
 
 const Role = require("../models/Role");
 const User = require("../models/User");
-const { response } = require("../middlewares/response");
-const { Op } = require("sequelize");
 
 async function authenticate(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
-  let match = null;
   try {
     const user = await User.findOne({
       where: { [Op.or]: [{ username }, { email: username }] },
       include: [Role],
     });
-    if (user) match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error("Invalid Credentials");
+    // Valida si existe o no el usuario
+    if (!user) next();
+
+    // Valida si tiene verificado el email
+    if (!user.email_verif) {
+      res.status(401);
+      throw new Error("unverified email");
+    }
+
+    // Valida si la contraseña es correcta
+    if (!bcrypt.compareSync(password, user.password)) {
+      res.status(401);
+      throw new Error("Invalid Credentials");
+    }
+    user.password = undefined;
     req.user = user;
     next();
   } catch (error) {
@@ -29,7 +41,8 @@ function generateToken(req, res, next) {
   if (!req.user) return next();
   req.token = jwt.sign(
     { id: req.user.id, role: req.user.role.name },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
   );
   next();
 }
@@ -48,7 +61,6 @@ function sendToken(req, res, next) {
 
 function validToken(req, res, next) {
   try {
-    if (!req.headers.authorization) throw new Error("Token not found");
     const token = req.headers.authorization.split(" ");
     const { id } = jwt.verify(token[1], process.env.JWT_SECRET);
     req.idUser = id;
