@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const Role = require("../models/Role");
 const User = require("../models/User");
+const { response } = require("../middlewares/response");
 
 async function authenticate(req, res, next) {
   const username = req.body.username;
@@ -35,10 +36,7 @@ function sendToken(req, res, next) {
       res.status(422);
       throw new Error("Could not get user");
     }
-    res.json({
-      user: req.user,
-      jwt: req.token,
-    });
+    response(res, { user: req.user, jwt: req.token }, null);
   } catch (error) {
     next(error);
   }
