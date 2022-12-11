@@ -29,18 +29,32 @@ const syncTables = async () => {
     await db.sync({ alter: true, match: /test$/ });
     console.log(`Tablas sincronizadas`);
 
-    // Para la insercion de roles
+    // Insercion catalogo de roles
     const roles = await db.query("select * from roles", {
       type: QueryTypes.SELECT,
     });
     if (roles.length === 0) {
-      await db.query("INSERT INTO roles (id, name) VALUES (1,'ADMIN')", {
-        type: QueryTypes.INSERT,
-      });
-      await db.query("INSERT INTO roles (id, name) VALUES (2,'USUARIO')", {
-        type: QueryTypes.INSERT,
-      });
+      await db.query(
+        "INSERT INTO roles (id, name) VALUES (1,'ADMIN'), (2,'USUARIO')",
+        {
+          type: QueryTypes.INSERT,
+        }
+      );
       console.log(`Roles Insertados`);
+    }
+
+    // Insercion catalogo de Documentos
+    const documents = await db.query("select * from documents", {
+      type: QueryTypes.SELECT,
+    });
+    if (documents.length === 0) {
+      await db.query(
+        "INSERT INTO documents (id, name) VALUES (1,'CEDULA'), (2,'RUC')",
+        {
+          type: QueryTypes.INSERT,
+        }
+      );
+      console.log(`Documentos Insertados`);
     }
 
     // Para la insercion del usuario admin por defecto
@@ -50,7 +64,7 @@ const syncTables = async () => {
     if (usuario.length === 0) {
       const hash = await bcrypt.hash("admin", 10);
       await db.query(
-        "INSERT INTO users ( id, name, surname, username, img, age, phone, email, password, document, document_id, created_at, updated_at, role_id) VALUES (1, 'ALEX', 'ARCENTALES', 'aarcentales', NULL, 25, NULL, 'aarcentales@gmail.com', :password, NULL, NULL, :date, :date, 1)",
+        "INSERT INTO users ( id, name, surname, username, img, age, phone, email, password, num_document, document_id, created_at, updated_at, role_id) VALUES (1, 'ALEX', 'ARCENTALES', 'aarcentales', NULL, 25, NULL, 'aarcentales@gmail.com', :password, NULL, NULL, :date, :date, 1)",
         {
           replacements: { password: hash, date: new Date() },
           type: QueryTypes.INSERT,

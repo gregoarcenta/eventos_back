@@ -9,7 +9,9 @@ require("./config/associations");
 
 // Imports routes
 const sessions = require("./routes/sessions.routes");
+const register = require("./routes/register.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
+
 
 // Configuration
 const app = express();
@@ -26,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/login", sessions);
+app.use("/register", register);
 /* app.use("/user", users);
 app.use("/course", course);
 app.use("/student", student);

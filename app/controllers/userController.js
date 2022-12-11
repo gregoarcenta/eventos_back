@@ -1,3 +1,5 @@
+const { response } = require("../middlewares/response");
+const bcrypt = require("bcrypt");
 const Role = require("../models/Role");
 const User = require("../models/User");
 
@@ -15,6 +17,18 @@ async function find(req, res, next) {
   }
 }
 
+async function create(req, res, next) {
+  try {
+    const { password, ...body } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+    await User.create({ ...body, password: hash, role_id: 2 });
+    response(res, null, "Registro exitoso!");
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   find,
+  create,
 };

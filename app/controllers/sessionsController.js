@@ -5,13 +5,17 @@ require("dotenv").config();
 const Role = require("../models/Role");
 const User = require("../models/User");
 const { response } = require("../middlewares/response");
+const { Op } = require("sequelize");
 
 async function authenticate(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
   let match = null;
   try {
-    const user = await User.findOne({ where: { username }, include: [Role] });
+    const user = await User.findOne({
+      where: { [Op.or]: [{ username }, { email: username }] },
+      include: [Role],
+    });
     if (user) match = await bcrypt.compare(password, user.password);
     if (!match) throw new Error("Invalid Credentials");
     req.user = user;

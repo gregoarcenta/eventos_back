@@ -1,6 +1,5 @@
-const { DataTypes, Model, Deferrable } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const { db } = require("../../config/db");
-const Role = require("./Role");
 
 class User extends Model {
   getFullname() {
@@ -25,6 +24,13 @@ User.init(
     },
     username: {
       type: DataTypes.STRING,
+      allowNull: false,
+      unique:true
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique:true,
     },
     img: {
       type: DataTypes.STRING,
@@ -35,18 +41,13 @@ User.init(
     phone: {
       type: DataTypes.INTEGER,
     },
-    email: {
-      type: DataTypes.STRING,
+    num_document: {
+      type: DataTypes.INTEGER,
     },
     password: {
       type: DataTypes.STRING,
-    },
-    document: {
-      type: DataTypes.INTEGER,
-    },
-    document_id: {
-      type: DataTypes.STRING,
-    },
+      allowNull: false,
+    }
   },
   {
     sequelize: db,
