@@ -1,16 +1,24 @@
-const { response } = require("../middlewares/response");
+const { response } = require("../middlewares/responseMiddleware");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Role = require("../models/Role");
 const User = require("../models/User");
+const { verifyMail } = require("../utils/sendMail");
 
 async function find(req, res, next) {
   try {
     const user = await User.findOne({
-      where: { id: req.idUser },
+      where: { id: req.user.id },
       include: [Role],
       attributes: { exclude: ["password"] },
     });
-    if (!user) next();
+    if (!user) return next();
+
+    // Valida si tiene verificado el email
+    if (!user.email_verif) {
+      res.status(401);
+      throw new Error("unverified email");
+    }
     req.user = user;
     next();
   } catch (error) {
@@ -22,12 +30,20 @@ async function create(req, res, next) {
   try {
     const { password, ...body } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    await User.create(
+    const user = await User.create(
       { ...body, password: hash, role_id: 2 },
       {
         fields: ["name", "surname", "email", "username", "password", "role_id"],
       }
     );
+    const token = jwt.sign({ id: user.id }, process.env.JWT_MAIL_VERIF, {
+      expiresIn: "10m",
+    });
+    const responseMail = await verifyMail(token, user.email);
+    if (responseMail.accepted.length === 0) {
+      await User.destroy({ where: { id: user.id } });
+      throw new Error("There was an error in the registration");
+    }
     response(res, null, "Registro exitoso!", 201);
   } catch (error) {
     next(error);

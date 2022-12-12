@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { response } = require("../middlewares/response");
+const { response } = require("../middlewares/responseMiddleware");
 const { Op } = require("sequelize");
 require("dotenv").config();
 
@@ -16,7 +16,7 @@ async function authenticate(req, res, next) {
       include: [Role],
     });
     // Valida si existe o no el usuario
-    if (!user) next();
+    if (!user) return next();
 
     // Valida si tiene verificado el email
     if (!user.email_verif) {
@@ -39,11 +39,9 @@ async function authenticate(req, res, next) {
 
 function generateToken(req, res, next) {
   if (!req.user) return next();
-  req.token = jwt.sign(
-    { id: req.user.id, role: req.user.role.name },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  req.token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
   next();
 }
 
@@ -59,20 +57,8 @@ function sendToken(req, res, next) {
   }
 }
 
-function validToken(req, res, next) {
-  try {
-    const token = req.headers.authorization.split(" ");
-    const { id } = jwt.verify(token[1], process.env.JWT_SECRET);
-    req.idUser = id;
-    next();
-  } catch (error) {
-    next(error);
-  }
-}
-
 module.exports = {
   authenticate,
   generateToken,
-  sendToken,
-  validToken,
+  sendToken
 };

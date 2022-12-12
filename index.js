@@ -1,6 +1,5 @@
 // Global Imports
 const express = require("express");
-const { expressjwt } = require("express-jwt");
 require("dotenv").config();
 
 // Import connect database
@@ -11,6 +10,7 @@ require("./config/associations");
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
+const { verifyMail } = require("./config/mailer");
 
 // Configuration
 const app = express();
@@ -20,14 +20,12 @@ const port = process.env.PORT;
 connect();
 syncTables();
 
+// Connect Send Mail
+verifyMail();
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] }).unless({
-    path: ["/login", "/register"],
-  })
-);
 
 // Routes
 app.use("/login", sessions);

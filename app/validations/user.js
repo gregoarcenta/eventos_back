@@ -1,45 +1,44 @@
-const User = require("../models/User")
+const User = require("../models/User");
 
 module.exports = {
   registerSchema: {
     name: {
       toUpperCase: true,
       notEmpty: true,
-      errorMessage: "El nombre es requerido",
+      errorMessage: "The name is required",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
-      errorMessage: "El apellido es requerido",
+      errorMessage: "The surname is required",
     },
     email: {
       notEmpty: {
-        errorMessage: "El email es requerido",
+        errorMessage: "The email is required",
       },
       isEmail: {
-        errorMessage: 'El email no es válido'
+        errorMessage: "El email is invalid",
       },
       custom: {
-        options: value => {
-          return User.findOne({ where: { email: value } })
-            .then(user => {
-              if (user) throw new Error('El email ya esta en uso')
-            })
-        }
-      }
+        options: (value) => {
+          return User.findOne({ where: { email: value } }).then((user) => {
+            if (user) throw new Error("The email is already in use");
+          });
+        },
+      },
     },
     username: {
       notEmpty: {
-        errorMessage: "El nombre de usuario es requerido",
+        errorMessage: "The username is required",
       },
       custom: {
-        options: value => {
-          return User.findOne({ where: { username: value } })
-            .then(user => {
-              if (user) throw new Error(`El nombre de usuario ${value} ya esta en uso`)
-            })
-        }
-      }
+        options: (value) => {
+          return User.findOne({ where: { username: value } }).then((user) => {
+            if (user)
+              throw new Error(`The username ${value} is already in use`);
+          });
+        },
+      },
     },
     password: {
       /* isStrongPassword: {
@@ -50,8 +49,20 @@ module.exports = {
       }, */
       isLength: {
         options: { min: 6 },
-        errorMessage: "La contraseña debe tener mínimo 6 digitos",
+        errorMessage: "Password must have a minimum of 6 digits",
       },
     },
-  }
-}  
+  },
+  authSchema: {
+    username: {
+      notEmpty: {
+        errorMessage: "The username is required",
+      },
+    },
+    password: {
+      notEmpty: {
+        errorMessage: "The password is requiredss",
+      }
+    },
+  },
+};
