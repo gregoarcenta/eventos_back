@@ -61,7 +61,7 @@ module.exports = {
     },
     password: {
       notEmpty: {
-        errorMessage: "The password is requiredss",
+        errorMessage: "The password is required",
       }
     },
   },

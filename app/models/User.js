@@ -25,32 +25,32 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique:true
+      unique: true,
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique:true,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    status:{
+    status: {
       type: DataTypes.BOOLEAN,
-      defaultValue:true
+      defaultValue: true,
     },
-    google:{
+    google: {
       type: DataTypes.BOOLEAN,
-      defaultValue:false
+      defaultValue: false,
     },
-    email_verif:{
+    email_verif: {
       type: DataTypes.BOOLEAN,
-      defaultValue:false
+      defaultValue: false,
     },
     num_document: {
       type: DataTypes.INTEGER,
-      unique:true
+      unique: true,
     },
     img: {
       type: DataTypes.STRING,
@@ -60,13 +60,17 @@ User.init(
     },
     phone: {
       type: DataTypes.INTEGER,
-    }
+    },
+    jwt_reset_token: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   },
   {
     sequelize: db,
     modelName: "user",
-    createdAt:'created_at',
-    updatedAt:'updated_at'
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   }
 );
 

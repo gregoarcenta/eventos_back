@@ -2,6 +2,9 @@
 const express = require("express");
 require("dotenv").config();
 
+// Import config mail
+const { verifyMail } = require("./config/mailer");
+
 // Import connect database
 const { connect, syncTables } = require("./config/db");
 require("./config/associations");
@@ -9,8 +12,8 @@ require("./config/associations");
 // Imports routes
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
+const password = require("./routes/password.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
-const { verifyMail } = require("./config/mailer");
 
 // Configuration
 const app = express();
@@ -30,12 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/login", sessions);
 app.use("/register", register);
-/* app.use("/user", users);
-app.use("/course", course);
-app.use("/student", student);
-app.use("/teacher", teacher);
-app.use("/institution", institution);
-app.use("/doc-curricular", curricular); */
+app.use("/recover", password);
 app.use(notFound);
 app.use(errorHandler);
 

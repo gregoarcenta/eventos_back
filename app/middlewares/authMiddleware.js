@@ -32,3 +32,19 @@ exports.verifyTokenEmail = (req, res, next) => {
     next(error);
   }
 };
+
+exports.verifyTokenPassword = (req, res, next) => {
+  try {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+      res.status(401);
+      throw new Error("Could not get Token");
+    }
+    const token = authorization.split(" ")[1];
+    const user = jwt.verify(token, process.env.JWT_RESET_PASS);
+    req.user = user;
+    next()
+  } catch (error) {
+    next(error);
+  }
+};
