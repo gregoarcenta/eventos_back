@@ -39,7 +39,7 @@ async function create(req, res, next) {
     }
 
     await User.update(
-      { jwt_reset_token: token },
+      { jwt_reset_token: token, jwt_reset_token_valid: true },
       { where: { id: req.user.id } }
     );
     response(res, null, "Email de recuperacion de contraseña enviado!");
@@ -50,10 +50,15 @@ async function create(req, res, next) {
 
 async function resetPassword(req, res, next) {
   try {
+    const user = await User.findOne({ where: { id:req.user.id } });
+    if(!user.jwt_reset_token_valid){
+      res.status(401);
+      throw new Error('The token has already been used')
+    }
     const { password } = req.body;
     const hash = await bcrypt.hash(password, 10);
     User.update(
-      { password: hash, jwt_reset_token: null },
+      { password: hash, jwt_reset_token: null, jwt_reset_token_valid: false },
       { where: { id: req.user.id } }
     );
     const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {

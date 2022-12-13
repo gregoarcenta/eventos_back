@@ -65,6 +65,10 @@ User.init(
       type: DataTypes.STRING,
       unique: true,
     },
+    jwt_reset_token_valid: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize: db,
