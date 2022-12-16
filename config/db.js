@@ -26,7 +26,8 @@ const connect = async () => {
 
 const syncTables = async () => {
   try {
-    await db.sync({ alter: true, match: /test$/ });
+    // await db.sync({ alter: true, match: /test$/ });
+    await db.sync({ alter: true });
     console.log(`Tablas sincronizadas`);
 
     // Insercion catalogo de roles
