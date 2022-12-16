@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// Verifica si ya existe un token valido para ya no crear otro hasta que expire
 async function verifyTokenPassword(req, res, next) {
   try {
     const { email } = req.body;
@@ -27,6 +28,7 @@ async function verifyTokenPassword(req, res, next) {
   }
 }
 
+// Crea el token para la recuperacion de la contrasena
 async function create(req, res, next) {
   try {
     const token = jwt.sign({ id: req.user.id }, process.env.JWT_RESET_PASS, {
@@ -48,12 +50,13 @@ async function create(req, res, next) {
   }
 }
 
+// Resetea la contrasena
 async function resetPassword(req, res, next) {
   try {
-    const user = await User.findOne({ where: { id:req.user.id } });
-    if(!user.jwt_reset_token_valid){
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (!user.jwt_reset_token_valid) {
       res.status(401);
-      throw new Error('The token has already been used')
+      throw new Error("The token has already been used");
     }
     const { password } = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -68,12 +71,30 @@ async function resetPassword(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
 
-  // TODO: Hacer nueva funcion para buscar el token enviado desde el front, si el token existe en la base de datos es porque va a cambiar de contrasenia, sino existe es porque pudo un token no valido que no existe, basicamente la pagina no existe, se enviaria un 404, si existe, validar el tiempo de expiracion ya que solo es de 10 min, si ya esta expirado, eliminarlo
+// Verifica que el token del usuario este activo para cambio de clave
+async function isValidResetToken(req, res, next) {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user.id, jwt_reset_token_valid: true },
+    });
+
+    if (!user){
+      res.status(404)
+      throw new Error('Invalid password reset token')
+    } 
+    
+    response(res, null, "Token is valid");
+
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
   create,
   resetPassword,
+  isValidResetToken,
   verifyTokenPassword,
 };

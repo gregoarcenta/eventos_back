@@ -26,6 +26,10 @@ router
     checkSchema(resetPasswordSchema),
     fieldsValidator,
     resetPasswordController.resetPassword
+  )
+  .get(
+    verifyTokenPassword,
+    resetPasswordController.isValidResetToken
   );
 
 module.exports = router;
