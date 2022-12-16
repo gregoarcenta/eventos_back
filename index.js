@@ -1,5 +1,6 @@
 // Global Imports
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 // Import config mail
@@ -27,6 +28,7 @@ syncTables();
 verifyMail();
 
 // Middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
