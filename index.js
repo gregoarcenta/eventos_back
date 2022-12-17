@@ -28,7 +28,7 @@ syncTables();
 verifyMail();
 
 // Middlewares
-app.use(cors());
+app.use(cors({origin:process.env.URL}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
