@@ -27,8 +27,26 @@ syncTables();
 // Connect Send Mail
 verifyMail();
 
+// CORS Config
+let allowlist;
+if (process.env.NODE_ENV === "development") {
+  app.use(cors())
+} else {
+  allowlist = [process.env.URL, process.env.URL_ADMIN];
+  const corsOptionsDelegate = function (req, callback) {
+    var corsOptions;
+    if (allowlist.indexOf(req.header("Origin")) !== -1) {
+      corsOptions = { origin: true };
+    } else {
+      corsOptions = { origin: false };
+    }
+    callback(null, corsOptions);
+  };
+  app.use(cors(corsOptionsDelegate));
+}
+console.log(allowlist);
+
 // Middlewares
-app.use(cors({origin:process.env.URL}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
