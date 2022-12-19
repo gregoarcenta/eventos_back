@@ -37,7 +37,7 @@ async function create(req, res, next) {
       }
     );
     const token = jwt.sign({ id: user.id }, process.env.JWT_MAIL_VERIF, {
-      expiresIn: "10m",
+      expiresIn: "3h",
     });
     const responseMail = await verifyMail(token, user.email);
     if (responseMail.accepted.length === 0) {

@@ -44,7 +44,6 @@ if (process.env.NODE_ENV === "development") {
   };
   app.use(cors(corsOptionsDelegate));
 }
-console.log(allowlist);
 
 // Middlewares
 app.use(express.json());
