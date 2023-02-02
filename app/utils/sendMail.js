@@ -3,7 +3,7 @@ const { transporter } = require("../../config/mailer");
 module.exports = {
   verifyMail: async (token, to) => {
     try {
-      const url = `http://localhost:3000/verify/${token}`;
+      const url = `${process.env.ACTIVE_URL}/registro/verificacion/${token}`;
       const info = await transporter.sendMail({
         from: `"EventosEC 📩" <${process.env.MAIL}>`,
         to,
@@ -17,7 +17,7 @@ module.exports = {
   },
   resetPassword: async (token, to) => {
     try {
-      const url = `http://localhost:3000/login/recover/${token}`;
+      const url = `${process.env.ACTIVE_URL}/recuperar-cuenta/${token}`;
       const info = await transporter.sendMail({
         from: `"EventosEC 📩" <${process.env.MAIL}>`,
         to,

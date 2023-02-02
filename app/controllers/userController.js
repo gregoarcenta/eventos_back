@@ -44,7 +44,7 @@ async function create(req, res, next) {
       await User.destroy({ where: { id: user.id } });
       throw new Error("There was an error in the registration");
     }
-    response(res, null, "Registro exitoso!", 201);
+    response(res, null, "Cuenta creada con exito!", 201);
   } catch (error) {
     next(error);
   }

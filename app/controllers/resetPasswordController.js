@@ -78,15 +78,15 @@ async function isValidResetToken(req, res, next) {
   try {
     const user = await User.findOne({
       where: { id: req.user.id, jwt_reset_token_valid: true },
+      attributes: { exclude: ["password"] },
     });
 
-    if (!user){
-      res.status(404)
-      throw new Error('Invalid password reset token')
-    } 
-    
-    response(res, null, "Token is valid");
+    if (!user) {
+      res.status(404);
+      throw new Error("Invalid password reset token");
+    }
 
+    response(res, user, "Token is valid");
   } catch (error) {
     next(error);
   }
