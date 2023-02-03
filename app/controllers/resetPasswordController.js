@@ -17,7 +17,7 @@ async function verifyTokenPassword(req, res, next) {
         return next();
       } else {
         res.status(401);
-        throw new Error("there is already a token in use");
+        throw new Error("Ya tienes un token de restablecimiento en uso");
       }
     }
 
@@ -37,14 +37,14 @@ async function create(req, res, next) {
     const responseMail = await sendMail.resetPassword(token, req.user.email);
 
     if (responseMail.accepted.length === 0) {
-      throw new Error("There was an error in the send mail");
+      throw new Error("Ocurrio un error al enviar el correo de reseteo de contraseña");
     }
 
     await User.update(
       { jwt_reset_token: token, jwt_reset_token_valid: true },
       { where: { id: req.user.id } }
     );
-    response(res, null, "Email de recuperacion de contraseña enviado!");
+    response(res, null, "Correo de recuperación de contraseña enviado!");
   } catch (error) {
     next(error);
   }
@@ -56,7 +56,7 @@ async function resetPassword(req, res, next) {
     const user = await User.findOne({ where: { id: req.user.id } });
     if (!user.jwt_reset_token_valid) {
       res.status(401);
-      throw new Error("The token has already been used");
+      throw new Error("EL enlace ya fue utilizado");
     }
     const { password } = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -83,10 +83,10 @@ async function isValidResetToken(req, res, next) {
 
     if (!user) {
       res.status(404);
-      throw new Error("Invalid password reset token");
+      throw new Error("El enlace ya no es valido");
     }
 
-    response(res, user, "Token is valid");
+    response(res, user, "El token es valido");
   } catch (error) {
     next(error);
   }

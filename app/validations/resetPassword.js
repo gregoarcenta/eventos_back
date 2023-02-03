@@ -4,15 +4,15 @@ module.exports = {
   recoverSchema: {
     email: {
       notEmpty: {
-        errorMessage: "The email is required",
+        errorMessage: "El correo electronico es requerido",
       },
       isEmail: {
-        errorMessage: "El email is invalid",
+        errorMessage: "El formato del correo electronico ingresado no es valido",
       },
       custom: {
         options: (value) => {
           return User.findOne({ where: { email: value } }).then((user) => {
-            if (!user) throw new Error("The email does not exist");
+            if (!user) throw new Error("El correo electronico ingresado no existe ");
           });
         },
       },
@@ -21,7 +21,7 @@ module.exports = {
   resetPasswordSchema: {
     password: {
       notEmpty: {
-        errorMessage: "The password is required",
+        errorMessage: "La contraseña es requerida",
       },
       /* isStrongPassword: {
         minLength: 8,
@@ -30,8 +30,8 @@ module.exports = {
         minNumbers: 1
       }, */
       isLength: {
-        options: { min: 6 },
-        errorMessage: "Password must have a minimum of 6 digits",
+        options: { min: 8 },
+        errorMessage: "La contraseña debe tener un minimo de 8 digitos",
       },
     },
   },

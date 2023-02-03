@@ -17,7 +17,7 @@ async function find(req, res, next) {
     // Valida si tiene verificado el email
     if (!user.email_verif) {
       res.status(401);
-      throw new Error("unverified email");
+      throw new Error("Cuenta aun no verificada");
     }
     req.user = user;
     next();
@@ -42,7 +42,7 @@ async function create(req, res, next) {
     const responseMail = await verifyMail(token, user.email);
     if (responseMail.accepted.length === 0) {
       await User.destroy({ where: { id: user.id } });
-      throw new Error("There was an error in the registration");
+      throw new Error("Ocurrio un error durante el registro");
     }
     response(res, null, "Cuenta creada con exito!", 201);
   } catch (error) {

@@ -6,7 +6,7 @@ exports.verifyToken = (req, res, next) => {
     const authorization = req.headers.authorization;
     if (!authorization) {
       res.status(401);
-      throw new Error("Could not get Token");
+      throw new Error("No se pudo encontrar el token");
     }
     const token = authorization.split(" ")[1];
     const user = jwt.verify(token, process.env.JWT_SECRET);
@@ -22,7 +22,7 @@ exports.verifyTokenEmail = (req, res, next) => {
     const authorization = req.headers.authorization;
     if (!authorization) {
       res.status(401);
-      throw new Error("Could not get Token");
+      throw new Error("No se pudo encontrar el token");
     }
     const token = authorization.split(" ")[1];
     const user = jwt.verify(token, process.env.JWT_MAIL_VERIF);
@@ -38,7 +38,7 @@ exports.verifyTokenPassword = (req, res, next) => {
     const authorization = req.headers.authorization;
     if (!authorization) {
       res.status(401);
-      throw new Error("Could not get Token");
+      throw new Error("No se pudo encontrar el token");
     }
     const token = authorization.split(" ")[1];
     const user = jwt.verify(token, process.env.JWT_RESET_PASS);

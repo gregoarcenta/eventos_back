@@ -5,37 +5,37 @@ module.exports = {
     name: {
       toUpperCase: true,
       notEmpty: true,
-      errorMessage: "The name is required",
+      errorMessage: "El nombre es requerido",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
-      errorMessage: "The surname is required",
+      errorMessage: "El apellido es requerido",
     },
     email: {
       notEmpty: {
-        errorMessage: "The email is required",
+        errorMessage: "El correo electronico es requerido",
       },
       isEmail: {
-        errorMessage: "El email is invalid",
+        errorMessage: "El formato del correo electronico no es valido",
       },
       custom: {
         options: (value) => {
           return User.findOne({ where: { email: value } }).then((user) => {
-            if (user) throw new Error("The email is already in use");
+            if (user) throw new Error("El correo electronico ya esta en uso");
           });
         },
       },
     },
     username: {
       notEmpty: {
-        errorMessage: "The username is required",
+        errorMessage: "El nombre de usuario es requerido",
       },
       custom: {
         options: (value) => {
           return User.findOne({ where: { username: value } }).then((user) => {
             if (user)
-              throw new Error(`The username ${value} is already in use`);
+              throw new Error(`El usuario ${value} ya se encuentra en uso`);
           });
         },
       },
@@ -48,21 +48,21 @@ module.exports = {
         minNumbers: 1
       }, */
       isLength: {
-        options: { min: 6 },
-        errorMessage: "Password must have a minimum of 6 digits",
+        options: { min: 8 },
+        errorMessage: "La contraseña debe tener un minimo 8 digitos",
       },
     },
   },
   authSchema: {
     username: {
       notEmpty: {
-        errorMessage: "The username is required",
+        errorMessage: "El usuario o correo electronico es requerido",
       },
     },
     password: {
       notEmpty: {
-        errorMessage: "The password is required",
-      }
+        errorMessage: "La contraseña es requerida",
+      },
     },
   },
 };

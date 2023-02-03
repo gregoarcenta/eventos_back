@@ -12,7 +12,7 @@ module.exports = {
       });
       return info;
     } catch (error) {
-      throw new Error("could not send mail");
+      throw new Error("No se pudo enviar el correo de verificacion");
     }
   },
   resetPassword: async (token, to) => {
@@ -26,7 +26,9 @@ module.exports = {
       });
       return info;
     } catch (error) {
-      throw new Error("could not send mail");
+      throw new Error(
+        "No se pudo enviar el correo de restablecimiento de contraseña"
+      );
     }
   },
 };

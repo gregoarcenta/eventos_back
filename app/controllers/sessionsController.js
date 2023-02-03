@@ -21,13 +21,13 @@ async function authenticate(req, res, next) {
     // Valida si tiene verificado el email
     if (!user.email_verif) {
       res.status(401);
-      throw new Error("unverified email");
+      throw new Error("Cuenta aun no verificada");
     }
 
     // Valida si la contraseña es correcta
     if (!bcrypt.compareSync(password, user.password)) {
       res.status(401);
-      throw new Error("Invalid Credentials");
+      throw new Error("Credenciales invalidas");
     }
     user.password = undefined;
     req.user = user;
@@ -49,7 +49,7 @@ function sendToken(req, res, next) {
   try {
     if (!req.user || !req.token) {
       res.status(422);
-      throw new Error("Could not get user");
+      throw new Error("No se encontro el usuario");
     }
     response(res, { user: req.user, jwt: req.token }, null);
   } catch (error) {

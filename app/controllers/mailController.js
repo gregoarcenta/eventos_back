@@ -10,7 +10,7 @@ async function verifyEmail(req, res, next) {
     if (!user) return next();
     if (user.email_verif) {
       res.status(412);
-      throw new Error("the email is already verified");
+      throw new Error("Su cuenta ya se encuentra verificada");
     }
     req.user = user;
     next();
@@ -21,14 +21,14 @@ async function verifyEmail(req, res, next) {
 
 async function sendToken(req, res, next) {
   try {
-    if (!req.user) throw new Error("email could not be verified");
+    if (!req.user) throw new Error("No se encontro la cuenta a verificar");
 
     await User.update({ email_verif: true }, { where: { id: req.user.id } });
 
     const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    response(res, { token }, "Email verificado");
+    response(res, { token }, "Tu cuenta fue verificada con exito");
   } catch (error) {
     next(error);
   }
