@@ -14,6 +14,7 @@ require("./config/associations");
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
 const password = require("./routes/password.routes");
+const user = require("./routes/user.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
 
 // Configuration
@@ -52,6 +53,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/login", sessions);
 app.use("/register", register);
+app.use("/user", user);
 app.use("/recover", password);
 app.use(notFound);
 app.use(errorHandler);

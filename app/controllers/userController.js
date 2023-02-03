@@ -50,7 +50,37 @@ async function create(req, res, next) {
   }
 }
 
+async function getUserByEmail(req, res, next) {
+  const email = req.params.email;
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      response(res, { valid: false }, null);
+    } else {
+      response(res, { valid: true }, null);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getUserByUsername(req, res, next) {
+  const username = req.params.username;
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (user) {
+      response(res, { valid: false }, null);
+    } else {
+      response(res, { valid: true }, null);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   find,
   create,
+  getUserByEmail,
+  getUserByUsername,
 };
