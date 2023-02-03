@@ -56,7 +56,7 @@ async function resetPassword(req, res, next) {
     const user = await User.findOne({ where: { id: req.user.id } });
     if (!user.jwt_reset_token_valid) {
       res.status(401);
-      throw new Error("EL enlace ya fue utilizado");
+      throw new Error("Ya has cambiado de contraseña");
     }
     const { password } = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -83,7 +83,7 @@ async function isValidResetToken(req, res, next) {
 
     if (!user) {
       res.status(404);
-      throw new Error("El enlace ya no es valido");
+      throw new Error("Ya has cambiado de contraseña");
     }
 
     response(res, user, "El token es valido");
