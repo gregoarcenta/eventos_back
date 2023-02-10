@@ -16,8 +16,9 @@ const register = require("./routes/register.routes");
 const password = require("./routes/password.routes");
 const user = require("./routes/user.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
-const { validateDomains } = require("./app/middlewares/authorizationMiddleware");
-
+const {
+  validateDomains,
+} = require("./app/middlewares/authorizationMiddleware");
 
 // Configuration
 const app = express();
@@ -31,12 +32,11 @@ syncTables();
 verifyMail();
 
 // CORS Config
-if (process.env.NODE_ENV === "development") {
-  app.use(cors());
-} else {
+app.use(cors());
+
+if (process.env.NODE_ENV === "production") {
   app.use("/*", validateDomains);
 }
-
 
 // Middlewares
 app.use(express.json());
