@@ -14,8 +14,11 @@ require("./config/associations");
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
 const password = require("./routes/password.routes");
+const jenkins = require("./routes/jenkins.routes");
 const user = require("./routes/user.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
+
+
 const {
   validateDomains,
 } = require("./app/middlewares/authorizationMiddleware");
@@ -43,6 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use("/jenkins", jenkins);
 app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
