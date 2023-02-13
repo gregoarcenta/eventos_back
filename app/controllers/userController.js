@@ -66,6 +66,7 @@ async function getUserByEmail(req, res, next) {
 
 async function getUserByUsername(req, res, next) {
   const username = req.params.username;
+  console.log("hola?");
   try {
     const user = await User.findOne({ where: { username } });
     if (user) {
