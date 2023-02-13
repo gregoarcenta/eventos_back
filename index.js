@@ -37,6 +37,8 @@ verifyMail();
 // CORS Config
 app.use(cors());
 
+app.use("/jenkins", jenkins);
+
 if (process.env.NODE_ENV === "production") {
   app.use("/*", validateDomains);
 }
@@ -46,7 +48,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/jenkins", jenkins);
 app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
