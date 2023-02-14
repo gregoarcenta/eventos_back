@@ -71,7 +71,7 @@ async function getUserByUsername(req, res, next) {
     if (user) {
       response(res, { valid: false }, null);
     } else {
-      response(res, { valid: "kdnjhbfhdsvh" }, null);
+      response(res, { valid: true }, null);
     }
   } catch (error) {
     next(error);

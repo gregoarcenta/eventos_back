@@ -27,6 +27,7 @@ module.exports = {
       });
       return info;
     } catch (error) {
+      console.log(error);
       throw new Error(
         "No se pudo enviar el correo de restablecimiento de contraseña"
       );
