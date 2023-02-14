@@ -18,6 +18,12 @@ async function authenticate(req, res, next) {
     // Valida si existe o no el usuario
     if (!user) return next();
 
+    const domain = req.headers.referer || req.headers.referrer
+    if (domain === "https://admin.eventosec.com/" && user.role.name !== "ADMIN") {
+      res.status(403);
+      throw new Error("Acceso no valido");
+    }
+
     // Valida si tiene verificado el email
     if (!user.email_verif) {
       res.status(401);
