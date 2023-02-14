@@ -25,9 +25,9 @@ module.exports = {
         subject: "Recuperación de cuenta ✔",
         html: `<p>Parece que has olvidado tu contraseña, puedes restablecerla desde el siguiente <a href="${url}">enlace</a></p>`,
       });
+      console.log("ENVIADO");
       return info;
     } catch (error) {
-      console.log(error);
       throw new Error(
         "No se pudo enviar el correo de restablecimiento de contraseña"
       );
