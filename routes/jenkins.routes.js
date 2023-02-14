@@ -3,6 +3,7 @@ const JenkinsController = require("../app/controllers/JenkinsController");
 
 const router = express.Router();
 
-router.route("/").post(JenkinsController.buidlFront);
+router.route("/front").post(JenkinsController.buidlFront);
+router.route("/back").post(JenkinsController.buidlBack);
 
 module.exports = router;
