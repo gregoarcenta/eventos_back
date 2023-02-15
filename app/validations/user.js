@@ -53,6 +53,75 @@ module.exports = {
       },
     },
   },
+  updateSchema: {
+    name: {
+      toUpperCase: true,
+      notEmpty: true,
+      errorMessage: "El nombre es requerido",
+    },
+    surname: {
+      toUpperCase: true,
+      notEmpty: true,
+      errorMessage: "El apellido es requerido",
+    },
+    email: {
+      notEmpty: {
+        errorMessage: "El correo electronico es requerido",
+      },
+      isEmail: {
+        errorMessage: "El formato del correo electronico no es valido",
+      },
+      custom: {
+        options: (value, { req }) => {
+          return User.findOne({ where: { email: value } }).then((user) => {
+            if (user && user.id !== req.user.id)
+              throw new Error("El correo electronico ya esta en uso");
+          });
+        },
+      },
+    },
+    username: {
+      notEmpty: {
+        errorMessage: "El nombre de usuario es requerido",
+      },
+      custom: {
+        options: (value, { req }) => {
+          return User.findOne({ where: { username: value } }).then((user) => {
+            if (user && user.id !== req.user.id)
+              throw new Error(`El usuario ${value} ya se encuentra en uso`);
+          });
+        },
+      },
+    },
+    age: {
+      isInt: true,
+      notEmpty: true,
+      errorMessage: "La edad es requerida",
+    },
+    phone: {
+      isInt: true,
+      isLength: {
+        errorMessage: "El telefono debe contener 10 digitos",
+        options: { min: 10, max: 10 },
+      },
+      notEmpty: true,
+      errorMessage: "El telefono es requerido",
+    },
+    document_id: {
+      isInt: true,
+      notEmpty: true,
+      errorMessage: "El tipo de documento es requerido",
+    },
+    num_document: {
+      isInt: true,
+      isLength: {
+        errorMessage: "El documento debe estar entre 10 y 13 digitos",
+        options: { min: 10, max: 13 },
+      },
+      notEmpty: true,
+      errorMessage: "El documento es requerido",
+    },
+  },
   authSchema: {
     username: {
       notEmpty: {

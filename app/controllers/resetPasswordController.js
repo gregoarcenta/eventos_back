@@ -3,6 +3,7 @@ const sendMail = require("../utils/sendMail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { excludeFieldsUser } = require("../utils/utils");
 
 // Verifica si ya existe un token valido para ya no crear otro hasta que expire
 async function verifyTokenPassword(req, res, next) {
@@ -37,7 +38,9 @@ async function create(req, res, next) {
     const responseMail = await sendMail.resetPassword(token, req.user.email);
 
     if (responseMail.accepted.length === 0) {
-      throw new Error("Ocurrio un error al enviar el correo de reseteo de contraseña");
+      throw new Error(
+        "Ocurrio un error al enviar el correo de reseteo de contraseña"
+      );
     }
 
     await User.update(
@@ -78,7 +81,6 @@ async function isValidResetToken(req, res, next) {
   try {
     const user = await User.findOne({
       where: { id: req.user.id, jwt_reset_token_valid: true },
-      attributes: { exclude: ["password"] },
     });
 
     if (!user) {
@@ -86,7 +88,7 @@ async function isValidResetToken(req, res, next) {
       throw new Error("Ya has cambiado de contraseña");
     }
 
-    response(res, user, "El token es valido");
+    response(res, excludeFieldsUser(user.toJSON()), "El token es valido");
   } catch (error) {
     next(error);
   }

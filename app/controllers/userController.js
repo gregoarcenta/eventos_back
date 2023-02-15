@@ -4,13 +4,13 @@ const bcrypt = require("bcrypt");
 const Role = require("../models/Role");
 const User = require("../models/User");
 const { verifyMail } = require("../utils/sendMail");
+const { excludeFieldsUser } = require("../utils/utils");
 
 async function find(req, res, next) {
   try {
     const user = await User.findOne({
       where: { id: req.user.id },
       include: [Role],
-      attributes: { exclude: ["password"] },
     });
     if (!user) return next();
 
@@ -50,6 +50,36 @@ async function create(req, res, next) {
   }
 }
 
+async function update(req, res, next) {
+  try {
+    await User.update(
+      { ...req.body },
+      {
+        where: { id: req.user.id },
+        fields: [
+          "name",
+          "surname",
+          "email",
+          "username",
+          "img",
+          "age",
+          "phone",
+          "num_document",
+          "document_id",
+        ],
+      }
+    );
+
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+
+    response(res, excludeFieldsUser(user.toJSON()), "Datos actualizados!");
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function getUserByEmail(req, res, next) {
   const email = req.params.email;
   try {
@@ -81,6 +111,7 @@ async function getUserByUsername(req, res, next) {
 module.exports = {
   find,
   create,
+  update,
   getUserByEmail,
   getUserByUsername,
 };

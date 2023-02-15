@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const Role = require("../models/Role");
 const User = require("../models/User");
+const { excludeFieldsUser } = require("../utils/utils");
 
 async function authenticate(req, res, next) {
   const username = req.body.username;
@@ -18,8 +19,11 @@ async function authenticate(req, res, next) {
     // Valida si existe o no el usuario
     if (!user) return next();
 
-    const domain = req.headers.referer || req.headers.referrer
-    if (domain === "https://admin.eventosec.com/" && user.role.name !== "ADMIN") {
+    const domain = req.headers.referer || req.headers.referrer;
+    if (
+      domain === "https://admin.eventosec.com/" &&
+      user.role.name !== "ADMIN"
+    ) {
       res.status(403);
       throw new Error("Acceso no valido");
     }
@@ -57,7 +61,8 @@ function sendToken(req, res, next) {
       res.status(422);
       throw new Error("No se encontro el usuario");
     }
-    response(res, { user: req.user, jwt: req.token }, null);
+    const user = excludeFieldsUser(req.user.toJSON());
+    response(res, { user, jwt: req.token }, null);
   } catch (error) {
     next(error);
   }
@@ -66,5 +71,5 @@ function sendToken(req, res, next) {
 module.exports = {
   authenticate,
   generateToken,
-  sendToken
+  sendToken,
 };
