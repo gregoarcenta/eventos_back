@@ -59,7 +59,7 @@ User.init(
       type: DataTypes.INTEGER,
     },
     phone: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     jwt_reset_token: {
       type: DataTypes.STRING,

@@ -15,6 +15,7 @@ const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
 const password = require("./routes/password.routes");
 const jenkins = require("./routes/jenkins.routes");
+const documents = require("./routes/document.routes");
 const user = require("./routes/user.routes");
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
 
@@ -37,6 +38,7 @@ verifyMail();
 // CORS Config
 app.use(cors());
 
+// Routes build jenkins
 app.use("/jenkins", jenkins);
 
 if (process.env.NODE_ENV === "production") {
@@ -52,6 +54,7 @@ app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
 app.use("/recover", password);
+app.use("/documents", documents);
 app.use(notFound);
 app.use(errorHandler);
 
