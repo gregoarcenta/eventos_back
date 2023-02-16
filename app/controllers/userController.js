@@ -108,10 +108,25 @@ async function getUserByUsername(req, res, next) {
   }
 }
 
+async function getUserByDocument(req, res, next) {
+  const num_document = req.params.num_document;
+  try {
+    const user = await User.findOne({ where: { num_document } });
+    if (user) {
+      response(res, { valid: false }, null);
+    } else {
+      response(res, { valid: true }, null);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   find,
   create,
   update,
   getUserByEmail,
+  getUserByDocument,
   getUserByUsername,
 };

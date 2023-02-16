@@ -16,6 +16,10 @@ router
   .get(userController.getUserByUsername);
 
 router
+  .route("/find-by-document/:num_document")
+  .get(userController.getUserByDocument);
+
+router
   .route("/")
   .put(
     verifyToken,
