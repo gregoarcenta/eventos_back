@@ -129,7 +129,7 @@ module.exports = {
       },
       notEmpty: true,
       errorMessage: "El documento es requerido",
-    },
+    }
   },
   authSchema: {
     username: {

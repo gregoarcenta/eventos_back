@@ -52,6 +52,10 @@ User.init(
       type: DataTypes.STRING,
       unique: true,
     },
+    business_name: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     img: {
       type: DataTypes.STRING,
     },

@@ -52,6 +52,19 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
+    const business_name = req.body.business_name?.trim();
+
+    if (req.body.document_id == 2 && !business_name) {
+      res.status(400);
+      throw new Error("La razón social es requerida");
+    }
+
+    if (req.body.document_id == 2 && business_name) {
+      req.body = { ...req.body, business_name };
+    } else {
+      req.body = { ...req.body, business_name: null };
+    }
+
     await User.update(
       { ...req.body },
       {
@@ -66,6 +79,7 @@ async function update(req, res, next) {
           "phone",
           "num_document",
           "document_id",
+          "business_name",
         ],
       }
     );
