@@ -49,7 +49,7 @@ User.init(
       defaultValue: false,
     },
     num_document: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       unique: true,
     },
     img: {

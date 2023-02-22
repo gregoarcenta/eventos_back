@@ -5,14 +5,17 @@ module.exports = {
     name: {
       toUpperCase: true,
       notEmpty: true,
+      trim:true,
       errorMessage: "El nombre es requerido",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
+      trim:true,
       errorMessage: "El apellido es requerido",
     },
     email: {
+      trim:true,
       notEmpty: {
         errorMessage: "El correo electronico es requerido",
       },
@@ -28,6 +31,7 @@ module.exports = {
       },
     },
     username: {
+      trim:true,
       notEmpty: {
         errorMessage: "El nombre de usuario es requerido",
       },
@@ -47,6 +51,7 @@ module.exports = {
         minUppercase: 1,
         minNumbers: 1
       }, */
+      trim:true,
       isLength: {
         options: { min: 8 },
         errorMessage: "La contraseña debe tener un minimo 8 digitos",
@@ -57,14 +62,17 @@ module.exports = {
     name: {
       toUpperCase: true,
       notEmpty: true,
+      trim:true,
       errorMessage: "El nombre es requerido",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
+      trim:true,
       errorMessage: "El apellido es requerido",
     },
     email: {
+      trim:true,
       notEmpty: {
         errorMessage: "El correo electronico es requerido",
       },
@@ -81,6 +89,7 @@ module.exports = {
       },
     },
     username: {
+      trim:true,
       notEmpty: {
         errorMessage: "El nombre de usuario es requerido",
       },
@@ -124,11 +133,13 @@ module.exports = {
   },
   authSchema: {
     username: {
+      trim:true,
       notEmpty: {
         errorMessage: "El usuario o correo electronico es requerido",
       },
     },
     password: {
+      trim:true,
       notEmpty: {
         errorMessage: "La contraseña es requerida",
       },

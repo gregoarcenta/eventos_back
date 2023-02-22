@@ -3,6 +3,7 @@ const User = require("../models/User");
 module.exports = {
   recoverSchema: {
     email: {
+      trim:true,
       notEmpty: {
         errorMessage: "El correo electronico es requerido",
       },
@@ -20,6 +21,7 @@ module.exports = {
   },
   resetPasswordSchema: {
     password: {
+      trim:true,
       notEmpty: {
         errorMessage: "La contraseña es requerida",
       },
