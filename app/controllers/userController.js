@@ -52,7 +52,7 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const business_name = req.body.business_name?.trim();
+    const business_name = req.body.business_name?.trim().toUpperCase();
 
     if (req.body.document_id == 2 && !business_name) {
       res.status(400);

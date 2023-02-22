@@ -50,7 +50,7 @@ const syncTables = async () => {
     });
     if (documents.length === 0) {
       await db.query(
-        "INSERT INTO documents (id, name) VALUES (1,'CEDULA'), (2,'RUC')",
+        "INSERT INTO documents (id, name) VALUES (1,'CEDULA'), (2,'RUC'), (3,'PASAPORTE')",
         {
           type: QueryTypes.INSERT,
         }
