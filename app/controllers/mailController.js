@@ -5,8 +5,7 @@ const User = require("../models/User");
 
 async function verifyEmail(req, res, next) {
   try {
-    const { id } = req.user;
-    const user = await User.findOne({ where: { id } });
+    const user = await User.findOne({ where: { id: req.user.id } });
     if (!user) return next();
     if (user.email_verif) {
       res.status(412);

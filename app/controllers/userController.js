@@ -17,7 +17,7 @@ async function find(req, res, next) {
     // Valida si tiene verificado el email
     if (!user.email_verif) {
       res.status(401);
-      throw new Error("Cuenta aun no verificada");
+      throw new Error("Tu cuenta aun no está verificada");
     }
     req.user = user;
     next();
@@ -88,7 +88,11 @@ async function update(req, res, next) {
       where: { id: req.user.id },
     });
 
-    response(res, excludeFieldsUser(user.toJSON()), "Datos actualizados!");
+    response(
+      res,
+      excludeFieldsUser(user.toJSON()),
+      "Tus datos han sido actualizados exitosamente!"
+    );
   } catch (error) {
     next(error);
   }

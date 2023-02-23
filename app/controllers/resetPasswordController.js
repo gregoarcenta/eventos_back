@@ -18,7 +18,9 @@ async function verifyTokenPassword(req, res, next) {
         return next();
       } else {
         res.status(401);
-        throw new Error("Ya tienes un token de restablecimiento en uso");
+        throw new Error(
+          `Ya se a enviado un correo recuperación a ${email} recientemente`
+        );
       }
     }
 

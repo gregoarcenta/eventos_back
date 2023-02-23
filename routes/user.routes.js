@@ -25,6 +25,7 @@ router
     verifyToken,
     checkSchema(updateSchema),
     fieldsValidator,
+    userController.find,
     userController.update
   );
 
