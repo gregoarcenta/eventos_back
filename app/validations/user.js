@@ -5,17 +5,17 @@ module.exports = {
     name: {
       toUpperCase: true,
       notEmpty: true,
-      trim:true,
+      trim: true,
       errorMessage: "El nombre es requerido",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
-      trim:true,
+      trim: true,
       errorMessage: "El apellido es requerido",
     },
     email: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "El correo electronico es requerido",
       },
@@ -31,7 +31,7 @@ module.exports = {
       },
     },
     username: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "El nombre de usuario es requerido",
       },
@@ -51,7 +51,7 @@ module.exports = {
         minUppercase: 1,
         minNumbers: 1
       }, */
-      trim:true,
+      trim: true,
       isLength: {
         options: { min: 8 },
         errorMessage: "La contraseña debe tener un minimo 8 digitos",
@@ -62,17 +62,17 @@ module.exports = {
     name: {
       toUpperCase: true,
       notEmpty: true,
-      trim:true,
+      trim: true,
       errorMessage: "El nombre es requerido",
     },
     surname: {
       toUpperCase: true,
       notEmpty: true,
-      trim:true,
+      trim: true,
       errorMessage: "El apellido es requerido",
     },
     email: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "El correo electronico es requerido",
       },
@@ -89,7 +89,7 @@ module.exports = {
       },
     },
     username: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "El nombre de usuario es requerido",
       },
@@ -127,19 +127,30 @@ module.exports = {
         errorMessage: "El documento debe estar entre 10 y 13 digitos",
         options: { min: 10, max: 13 },
       },
-      notEmpty: true,
-      errorMessage: "El documento es requerido",
-    }
+      notEmpty: {
+        errorMessage: "El numero de documento es requerido",
+      },
+      custom: {
+        options: (value, { req }) => {
+          return User.findOne({ where: { num_document: value } }).then(
+            (user) => {
+              if (user && user.id !== req.user.id)
+                throw new Error(`El documento ${value} ya se encuentra en uso`);
+            }
+          );
+        },
+      },
+    },
   },
   authSchema: {
     username: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "El usuario o correo electronico es requerido",
       },
     },
     password: {
-      trim:true,
+      trim: true,
       notEmpty: {
         errorMessage: "La contraseña es requerida",
       },
