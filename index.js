@@ -16,9 +16,12 @@ const register = require("./routes/register.routes");
 const password = require("./routes/password.routes");
 const jenkins = require("./routes/jenkins.routes");
 const documents = require("./routes/document.routes");
+const services = require("./routes/services.routes");
+const provinces = require("./routes/provinces.routes");
+const cities = require("./routes/city.routes");
 const user = require("./routes/user.routes");
-const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
 
+const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
 
 const {
   validateDomains,
@@ -55,6 +58,9 @@ app.use("/register", register);
 app.use("/user", user);
 app.use("/recover", password);
 app.use("/documents", documents);
+app.use("/services", services);
+app.use("/provinces", provinces);
+app.use("/cities", cities);
 app.use(notFound);
 app.use(errorHandler);
 

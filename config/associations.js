@@ -1,6 +1,10 @@
 const Role = require("../app/models/Role");
 const User = require("../app/models/User");
 const Document = require("../app/models/Document");
+const Contact = require("../app/models/Contact");
+const Service = require("../app/models/Service");
+const Province = require("../app/models/Province");
+const City = require("../app/models/City");
 
 /**
  * 
@@ -43,3 +47,73 @@ User.belongsTo(Document, {
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",
 });
+
+/**
+ * 
+ * Relations
+ * Province 1 -> M Cities
+ * 
+ */
+
+// Una provincia tiene muchas ciudades
+Province.hasMany(City, {
+  foreignKey: {
+    allowNull: false,
+    name: "province_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+City.belongsTo(Province, {
+  foreignKey: {
+    allowNull: false,
+    name: "province_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+/**
+ * 
+ * Relations
+ * Contact 1 -> 1 Service 
+ * Contact 1 -> 1 City
+ * 
+ */
+
+// Un contacto tiene un solo tipo de servicio
+Service.hasOne(Contact, {
+  foreignKey: {
+    allowNull: false,
+    name: "service_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Contact.belongsTo(Service, {
+  foreignKey: {
+    allowNull: false,
+    name: "service_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+// Un contacto tiene un solo una ciudad
+City.hasOne(Contact, {
+  foreignKey: {
+    allowNull: false,
+    name: "city_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Contact.belongsTo(City, {
+  foreignKey: {
+    allowNull: false,
+    name: "city_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
