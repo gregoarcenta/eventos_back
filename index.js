@@ -18,10 +18,12 @@ const jenkins = require("./routes/jenkins.routes");
 const documents = require("./routes/document.routes");
 const services = require("./routes/services.routes");
 const provinces = require("./routes/provinces.routes");
+const contact = require("./routes/contact.routes");
 const cities = require("./routes/city.routes");
 const user = require("./routes/user.routes");
 
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
+
 
 const {
   validateDomains,
@@ -57,6 +59,8 @@ app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
 app.use("/recover", password);
+// app.use("/events", events);
+app.use("/contact", contact);
 app.use("/documents", documents);
 app.use("/services", services);
 app.use("/provinces", provinces);

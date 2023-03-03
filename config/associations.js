@@ -76,13 +76,18 @@ City.belongsTo(Province, {
 /**
  * 
  * Relations
- * Contact 1 -> 1 Service 
- * Contact 1 -> 1 City
+ * Service 1 -> M Contact 
+ * City 1 -> M Contact
  * 
  */
 
-// Un contacto tiene un solo tipo de servicio
-Service.hasOne(Contact, {
+/**
+ * 
+ * Un servicio los pueder solicitar muchos contactos 
+ * y un contacto solo puede solicitar un servicio
+ * 
+ */
+Service.hasMany(Contact, {
   foreignKey: {
     allowNull: false,
     name: "service_id",
@@ -99,8 +104,13 @@ Contact.belongsTo(Service, {
   onUpdate: "RESTRICT",
 });
 
-// Un contacto tiene un solo una ciudad
-City.hasOne(Contact, {
+/**
+ * 
+ * Una ciudad puede ser seleccionada por muchos contactos 
+ * y un contacto solo puede seleccionar una ciudad
+ * 
+ */
+City.hasMany(Contact, {
   foreignKey: {
     allowNull: false,
     name: "city_id",
