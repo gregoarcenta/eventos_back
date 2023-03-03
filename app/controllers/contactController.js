@@ -1,7 +1,7 @@
-const { response } = require("../middlewares/responseMiddleware");
 const City = require("../models/City");
 const Contact = require("../models/Contact");
 const Service = require("../models/Service");
+const { response } = require("../middlewares/responseMiddleware");
 const { responseContactForm } = require("../utils/sendMail");
 
 async function index(req, res, next) {
