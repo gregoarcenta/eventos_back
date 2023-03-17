@@ -3,7 +3,7 @@ const axios = require("axios");
 exports.validateContactForm = async (req, res, next) => {
   try {
     const { captcha_token } = req.body;
-    const secret = "6LeuKc4kAAAAAOEAHuAnVKm9TTJIlDxMm0lajIb7";
+    const secret = process.env.CAPTCHA_SITE_SECRET;
     const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captcha_token}`;
     const { data } = await axios({ method: "post", url, data: {} });
     console.log("respuesta token captcha: ", data);
