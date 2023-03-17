@@ -12,7 +12,10 @@ async function find(req, res, next) {
       where: { id: req.user.id },
       include: [Role],
     });
-    if (!user) return next();
+    if (!user) {
+      req.user = user;
+      return next();
+    }
 
     // Valida si tiene verificado el email
     if (!user.email_verif) {
@@ -52,6 +55,10 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
+    if (!req.user) {
+      res.status(422);
+      throw new Error("El usuario que intentas actualizar no existe");
+    }
     const business_name = req.body.business_name?.trim().toUpperCase();
 
     if (req.body.document_id == 2 && !business_name) {
@@ -92,6 +99,25 @@ async function update(req, res, next) {
       res,
       excludeFieldsUser(user.toJSON()),
       "Tus datos han sido actualizados exitosamente!"
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateImgProfile(req, res, next) {
+  try {
+    if (!req.user) {
+      res.status(422);
+      throw new Error("El usuario en el que intentas actualizar la imagen no existe");
+    }
+    const { img } = req.body;
+    await User.update({ img }, { where: { id: req.user.id }, fields: ["img"] });
+    const user = await User.findOne({ where: { id: req.user.id } });
+    response(
+      res,
+      excludeFieldsUser(user.toJSON()),
+      "Imagen de perfil actualizada"
     );
   } catch (error) {
     next(error);
@@ -144,6 +170,7 @@ module.exports = {
   find,
   create,
   update,
+  updateImgProfile,
   getUserByEmail,
   getUserByDocument,
   getUserByUsername,

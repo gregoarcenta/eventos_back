@@ -57,7 +57,7 @@ User.init(
       unique: true,
     },
     img: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     age: {
       type: DataTypes.INTEGER,

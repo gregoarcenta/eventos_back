@@ -142,6 +142,13 @@ module.exports = {
       },
     },
   },
+  updateImgProfileSchema: {
+    img: {
+      notEmpty: true,
+      trim: true,
+      errorMessage: "La imagen es requerida",
+    }
+  },
   authSchema: {
     username: {
       trim: true,

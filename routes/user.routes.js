@@ -1,6 +1,6 @@
 const express = require("express");
 const { checkSchema } = require("express-validator");
-const { updateSchema } = require("../app/validations/user");
+const { updateSchema, updateImgProfileSchema } = require("../app/validations/user");
 const userController = require("../app/controllers/userController");
 const {
   fieldsValidator,
@@ -18,6 +18,16 @@ router
 router
   .route("/find-by-document/:num_document")
   .get(userController.getUserByDocument);
+
+router
+  .route("/update-img-profile")
+  .put(
+    verifyToken,
+    checkSchema(updateImgProfileSchema),
+    fieldsValidator,
+    userController.find,
+    userController.updateImgProfile
+  );
 
 router
   .route("/")
