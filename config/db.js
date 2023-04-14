@@ -28,7 +28,8 @@ const syncTables = async () => {
   try {
     // await db.sync({ alter: true, match: /test$/ });
     await db.sync({ alter: true });
-    
+    // await db.sync({ force: true });
+
     // Insercion catalogo de roles
     const roles = await db.query("select * from roles", {
       type: QueryTypes.SELECT,

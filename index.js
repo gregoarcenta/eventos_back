@@ -19,8 +19,10 @@ const documents = require("./routes/document.routes");
 const services = require("./routes/services.routes");
 const provinces = require("./routes/provinces.routes");
 const contact = require("./routes/contact.routes");
+const events = require("./routes/event.routes");
 const cities = require("./routes/city.routes");
 const user = require("./routes/user.routes");
+const upload = require("./routes/upload.routes");
 
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
 
@@ -59,12 +61,13 @@ app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
 app.use("/recover", password);
-// app.use("/events", events);
+app.use("/events", events);
 app.use("/contact", contact);
 app.use("/documents", documents);
 app.use("/services", services);
 app.use("/provinces", provinces);
 app.use("/cities", cities);
+app.use("/upload", upload);
 app.use(notFound);
 app.use(errorHandler);
 

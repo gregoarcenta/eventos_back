@@ -5,13 +5,15 @@ const Contact = require("../app/models/Contact");
 const Service = require("../app/models/Service");
 const Province = require("../app/models/Province");
 const City = require("../app/models/City");
+const Event = require("../app/models/Event");
+const Place = require("../app/models/Place");
 
 /**
- * 
+ *
  * Relations
- * User 1 -> 1 role 
+ * User 1 -> 1 role
  * User 1 -> 1 document
- * 
+ *
  */
 
 // Un usuario tiene un solo tipo de rol
@@ -49,10 +51,10 @@ User.belongsTo(Document, {
 });
 
 /**
- * 
+ *
  * Relations
  * Province 1 -> M Cities
- * 
+ *
  */
 
 // Una provincia tiene muchas ciudades
@@ -74,18 +76,18 @@ City.belongsTo(Province, {
 });
 
 /**
- * 
+ *
  * Relations
- * Service 1 -> M Contact 
+ * Service 1 -> M Contact
  * City 1 -> M Contact
- * 
+ *
  */
 
 /**
- * 
- * Un servicio los pueder solicitar muchos contactos 
+ *
+ * Un servicio puede ser solicitado por muchos contactos
  * y un contacto solo puede solicitar un servicio
- * 
+ *
  */
 Service.hasMany(Contact, {
   foreignKey: {
@@ -105,10 +107,10 @@ Contact.belongsTo(Service, {
 });
 
 /**
- * 
- * Una ciudad puede ser seleccionada por muchos contactos 
+ *
+ * Una ciudad puede ser seleccionada por muchos contactos
  * y un contacto solo puede seleccionar una ciudad
- * 
+ *
  */
 City.hasMany(Contact, {
   foreignKey: {
@@ -127,3 +129,60 @@ Contact.belongsTo(City, {
   onUpdate: "RESTRICT",
 });
 
+/**
+ *
+ *
+ * EVENTOS
+ *
+ *
+ */
+
+/**
+ *
+ * Un evento solo puede estar asigando a un solo lugar
+ * y un lugar puede estar asignado a varios eventos pero con distintos horarios
+ *
+ */
+
+Place.hasOne(Event, {
+  foreignKey: {
+    allowNull: false,
+    name: "place_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Event.belongsTo(Place, {
+  foreignKey: {
+    allowNull: false,
+    name: "place_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+
+/**
+ *
+ * Un usuario solo puede tener muchos lugares para realizar eventos
+ * y un lugar puede estar asignado a un usuario
+ * Permite nulos porque existen places por fefecto que no les pertenecen a ningun usuario
+ *
+ */
+
+User.hasMany(Place, {
+  foreignKey: {
+    allowNull: true,
+    name: "user_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Place.belongsTo(User, {
+  foreignKey: {
+    allowNull: true,
+    name: "user_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
