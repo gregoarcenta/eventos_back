@@ -28,7 +28,10 @@ function validateFile(req, res, next) {
     // Path para guardar la imagen
     const path = `./uploads/eventos/${nameFile}`;
     bannerImg.mv(path, (err) => {
-      if (err) return next();
+      if (err) {
+        console.log(err);
+        return next();
+      }
 
       req.nameFile = nameFile;
       next();
