@@ -1,24 +1,18 @@
 const express = require("express");
-const { checkSchema } = require("express-validator");
-const {
-  updateSchema,
-  updateImgProfileSchema,
-} = require("../app/validations/user");
+const fileUpload = require("express-fileupload");
 const uploadController = require("../app/controllers/uploadController");
-
-const {
-  fieldsValidator,
-} = require("../app/middlewares/fieldsValidatorMiddleware");
+const { validateFile } = require("../app/middlewares/uploadFileMiddleware");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
 
 const router = express.Router();
+router.use(fileUpload());
 
-router.route("/eventos/:id").put(
-  verifyToken,
-  /* checkSchema(updateSchema),
-    fieldsValidator, */
-  uploadController.uploadFile
-  // userController.update
-);
+router
+  .route("/eventos")
+  .post(verifyToken, validateFile, uploadController.uploadFile);
+
+router
+  .route("/eventos/:id")
+  .put(verifyToken, validateFile, uploadController.updateFile);
 
 module.exports = router;

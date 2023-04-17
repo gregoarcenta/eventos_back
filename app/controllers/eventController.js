@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const { response } = require("../middlewares/responseMiddleware");
 const City = require("../models/City");
 const Direction = require("../models/Direction");
@@ -78,7 +77,7 @@ async function create(req, res, next) {
       }
     }
 
-    //Si no existe el place_id significa que creo un lugar que no estaba en los del default
+    // Si no existe el place_id significa que creo un lugar que no estaba en los del default
     if (!place_id) {
       const user = await User.findOne({ where: { id }, include: [Role] });
       newPlaceCreated = await Place.create(
