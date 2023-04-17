@@ -1,30 +1,25 @@
 const express = require("express");
 const { checkSchema } = require("express-validator");
-const {
-  updateSchema,
-  updateImgProfileSchema,
-} = require("../app/validations/user");
 const eventController = require("../app/controllers/eventController");
+const userController = require("../app/controllers/userController");
+
+
 const {
   fieldsValidator,
 } = require("../app/middlewares/fieldsValidatorMiddleware");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
+const { registerEventSchema } = require("../app/validations/event");
 
 const router = express.Router();
 
 router
   .route("/")
   .get(verifyToken, eventController.index)
-  .post(verifyToken, eventController.create);
-
-/* router
-  .route("/")
-  .put(
+  .post(
     verifyToken,
-    checkSchema(updateSchema),
+    checkSchema(registerEventSchema),
     fieldsValidator,
     userController.find,
-    userController.update
+    eventController.create
   );
- */
 module.exports = router;

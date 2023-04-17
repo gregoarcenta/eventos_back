@@ -7,6 +7,7 @@ const Province = require("../app/models/Province");
 const City = require("../app/models/City");
 const Event = require("../app/models/Event");
 const Place = require("../app/models/Place");
+const Direction = require("../app/models/Direction");
 
 /**
  *
@@ -161,6 +162,29 @@ Event.belongsTo(Place, {
   onUpdate: "RESTRICT",
 });
 
+/**
+ *
+ * Un evento ofrece un solo servicio y un servico puede ser ofrecido por varios eventos
+ *
+ */
+
+Service.hasOne(Event, {
+  foreignKey: {
+    allowNull: false,
+    name: "service_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Event.belongsTo(Service, {
+  foreignKey: {
+    allowNull: false,
+    name: "service_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
 
 /**
  *
@@ -186,3 +210,73 @@ Place.belongsTo(User, {
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",
 });
+
+/**
+ *
+ * Un lugar solo tiene una direccion
+ *
+ */
+
+Place.hasOne(Direction, {
+  foreignKey: {
+    allowNull: false,
+    name: "place_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Direction.belongsTo(Place, {
+  foreignKey: {
+    allowNull: false,
+    name: "place_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+/**
+ *
+ * Una provincia puede tener muchas direcciones para eventos
+ *
+ */
+
+Province.hasMany(Direction, {
+  foreignKey: {
+    allowNull: false,
+    name: "province_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Direction.belongsTo(Province, {
+  foreignKey: {
+    allowNull: false,
+    name: "province_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+/**
+ *
+ * Una ciudad puede tener muchas direcciones para eventos
+ *
+ */
+
+City.hasMany(Direction, {
+  foreignKey: {
+    allowNull: false,
+    name: "city_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Direction.belongsTo(City, {
+  foreignKey: {
+    allowNull: false,
+    name: "city_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
