@@ -13,6 +13,8 @@ router
 
 router
   .route("/eventos/:id")
-  .put(verifyToken, validateFile, uploadController.updateFile);
+  .get(uploadController.returnFile)
+  .put(verifyToken, validateFile, uploadController.updateFile)
+  .delete(verifyToken, uploadController.deleteFile)
 
 module.exports = router;

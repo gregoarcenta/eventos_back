@@ -1,8 +1,24 @@
 const fs = require("fs");
-const { response } = require("../middlewares/responseMiddleware");
+const path = require("path");
 const Event = require("../models/Event");
+const { response } = require("../middlewares/responseMiddleware");
 
-async function uploadFile(req, res, next) {
+function returnFile(req, res, next) {
+  try {
+    const imgageId = req.params.id;
+    const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
+
+    if (fs.existsSync(pathImg)) {
+      return res.sendFile(pathImg);
+    }
+
+    res.sendFile(path.join(__dirname, "../../uploads/default-placeholder.png"));
+  } catch (error) {
+    next(error);
+  }
+}
+
+function uploadFile(req, res, next) {
   try {
     if (!req.nameFile) {
       res.status(503);
@@ -24,12 +40,12 @@ async function updateFile(req, res, next) {
     const event = await Event.findOne({ where: { id: req.params.id } });
 
     if (!event) {
-      deleteFile(req.nameFile)
+      deleteFileLocal(req.nameFile);
       res.status(404);
       throw new Error("El evento al que intentas acceder no existe");
     }
-    
-    deleteFile(event.img)
+
+    deleteFileLocal(event.img);
     event.img = req.nameFile;
     await event.save();
 
@@ -39,22 +55,48 @@ async function updateFile(req, res, next) {
   }
 }
 
-function deleteFile(imgName) {
+function deleteFile(req, res, next) {
+  try {
+    const imgageId = req.params.id;
+    const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
+
+    if (!fs.existsSync(pathImg)) {
+      res.status(404);
+      throw new Error("El archivo que deseas eliminar no existe");
+    }
+    
+    fs.unlink(pathImg, (err) => {
+      if (err) {
+        console.log(
+          "ERROR: no se pudo eliminar el archivo de la ruta: ",
+          pathImg
+        );
+      }
+      response(res, null, "Archivo eliminado correctamente");
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+function deleteFileLocal(imgName) {
   const oldPath = `./uploads/eventos/${imgName}`;
 
-    if (fs.existsSync(oldPath)) {
-      fs.unlink(oldPath, (err) => {
-        if (err) {
-          console.log(
-            "ERROR: no se pudo eliminar el archivo de la ruta: ",
-            oldPath
-          );
-        }
-      });
-    }
+  if (fs.existsSync(oldPath)) {
+    fs.unlink(oldPath, (err) => {
+      if (err) {
+        console.log(
+          "ERROR: no se pudo eliminar el archivo de la ruta: ",
+          oldPath
+        );
+      }
+    });
+  }
 }
 
 module.exports = {
+  returnFile,
   uploadFile,
   updateFile,
+  deleteFile
 };
