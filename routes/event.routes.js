@@ -21,8 +21,9 @@ router
     userController.find,
     eventController.create
   );
+  
+router.route("/:id").get(verifyToken, eventController.getEventById);
 
-router
-  .route("/:term")
-  .get(verifyToken, eventController.searchEvent)
+router.route("/:term").get(verifyToken, eventController.searchEvent);
+
 module.exports = router;

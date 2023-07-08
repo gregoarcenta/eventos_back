@@ -26,6 +26,24 @@ async function index(req, res, next) {
   }
 }
 
+async function getEventById(req, res, next) {
+  try {
+    const { id } = req.params;
+    const event = await Event.findOne({
+      where: { id },
+    });
+    if (!event) {
+      res.status(404);
+      throw new Error(
+        "El evento al que intentas acceder no existe"
+      );
+    }
+    response(res, event, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function create(req, res, next) {
   try {
     const { place_id, place } = req.body;
@@ -161,4 +179,5 @@ module.exports = {
   index,
   create,
   searchEvent,
+  getEventById
 };
