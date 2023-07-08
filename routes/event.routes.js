@@ -3,7 +3,6 @@ const { checkSchema } = require("express-validator");
 const eventController = require("../app/controllers/eventController");
 const userController = require("../app/controllers/userController");
 
-
 const {
   fieldsValidator,
 } = require("../app/middlewares/fieldsValidatorMiddleware");
@@ -22,4 +21,8 @@ router
     userController.find,
     eventController.create
   );
+
+router
+  .route("/:term")
+  .get(verifyToken, eventController.searchEvent)
 module.exports = router;

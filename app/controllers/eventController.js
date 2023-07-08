@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { response } = require("../middlewares/responseMiddleware");
 const City = require("../models/City");
 const Direction = require("../models/Direction");
@@ -108,6 +109,32 @@ async function create(req, res, next) {
   }
 }
 
+async function searchEvent(req, res, next) {
+  try {
+    const { term } = req.params;
+    const fragmentoBusqueda = `%${term}%`;
+    const events = await Event.findAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.iLike]: fragmentoBusqueda,
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: fragmentoBusqueda,
+            },
+          },
+        ],
+      },
+    });
+    response(res, events, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 function formateaMomento(momento) {
   const regexp = /\d\d:\d\d(:\d\d)?/;
   if (regexp.test(momento)) {
@@ -133,4 +160,5 @@ function generadorHorario(horaApertura, horaCierre) {
 module.exports = {
   index,
   create,
+  searchEvent,
 };
