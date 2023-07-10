@@ -8,6 +8,8 @@ const City = require("../app/models/City");
 const Event = require("../app/models/Event");
 const Place = require("../app/models/Place");
 const Direction = require("../app/models/Direction");
+const Locality = require("../app/models/Locality");
+const PlaceLocality = require("../app/models/PlaceLocality");
 
 /**
  *
@@ -184,6 +186,55 @@ Event.belongsTo(Service, {
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",
 });
+
+/**
+ *
+ * Una localidad del catalogo de "localities" puede ser una localidad de un evento de la tabla "place_locality"
+ *
+ */
+
+Locality.hasOne(PlaceLocality, {
+  foreignKey: {
+    allowNull: false,
+    name: "locality_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+PlaceLocality.belongsTo(Locality, {
+  foreignKey: {
+    allowNull: false,
+    name: "locality_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+/**
+ *
+ * Una localidad de la tabla "place_locality" es parte de un evento
+ * NOTA: La tabla "place_locality" puede contener valores nulos, estos valores hacer referenciaa que no pertenecen
+ * a ningun evento por lo que les pertenece a una plantilla de lugar
+ *
+ */
+
+Event.hasMany(PlaceLocality, {
+  foreignKey: {
+    allowNull: false,
+    name: "event_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+PlaceLocality.belongsTo(Event, {
+  foreignKey: {
+    allowNull: false,
+    name: "event_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
 
 
 /**

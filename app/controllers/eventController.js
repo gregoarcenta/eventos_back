@@ -8,6 +8,8 @@ const Province = require("../models/Province");
 const Role = require("../models/Role");
 const Service = require("../models/Service");
 const User = require("../models/User");
+const PlaceLocality = require("../models/PlaceLocality");
+const Locality = require("../models/Locality");
 
 async function index(req, res, next) {
   try {
@@ -16,6 +18,10 @@ async function index(req, res, next) {
         {
           model: Place,
           include: [{ model: Direction, include: [Province, City] }],
+        },
+        {
+          model: PlaceLocality,
+          include: [Locality],
         },
         { model: Service },
       ],
@@ -34,9 +40,7 @@ async function getEventById(req, res, next) {
     });
     if (!event) {
       res.status(404);
-      throw new Error(
-        "El evento al que intentas acceder no existe"
-      );
+      throw new Error("El evento al que intentas acceder no existe");
     }
     response(res, event, null);
   } catch (error) {
@@ -61,7 +65,7 @@ async function create(req, res, next) {
       "end_date",
       "end_time",
       "service_id",
-      "place_id",
+      "place_id"
     ];
 
     if (!req.user) {
@@ -120,7 +124,7 @@ async function create(req, res, next) {
       req.body.place_id = newPlaceCreated.id;
     }
 
-    await Event.create({ ...req.body }, { fields });
+    await Event.create({ ...req.body }, { fields, include: [PlaceLocality] });
     response(res, null, "Evento agregado correctamente", 201);
   } catch (error) {
     next(error);
@@ -179,5 +183,5 @@ module.exports = {
   index,
   create,
   searchEvent,
-  getEventById
+  getEventById,
 };

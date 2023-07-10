@@ -11,7 +11,7 @@ Direction.init(
       primaryKey: true,
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     reference: {
