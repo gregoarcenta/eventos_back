@@ -14,6 +14,7 @@ router
 router
   .route("/eventos/:id")
   .get(uploadController.returnFile)
+  .post(verifyToken, uploadController.deleteFileIfNotExists)
   .put(verifyToken, validateFile, uploadController.updateFile)
   .delete(verifyToken, uploadController.deleteFile)
 

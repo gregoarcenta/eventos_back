@@ -3,21 +3,6 @@ const path = require("path");
 const Event = require("../models/Event");
 const { response } = require("../middlewares/responseMiddleware");
 
-function returnFile(req, res, next) {
-  try {
-    const imgageId = req.params.id;
-    const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
-
-    if (fs.existsSync(pathImg)) {
-      return res.sendFile(pathImg);
-    }
-
-    res.sendFile(path.join(__dirname, "../../uploads/default-placeholder.png"));
-  } catch (error) {
-    next(error);
-  }
-}
-
 function uploadFile(req, res, next) {
   try {
     if (!req.nameFile) {
@@ -30,6 +15,21 @@ function uploadFile(req, res, next) {
   }
 }
 
+function returnFile(req, res, next) {
+  try {
+    const imgageId = req.params.id; //nombre de la imagen
+    const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
+
+    if (fs.existsSync(pathImg)) {
+      return res.sendFile(pathImg);
+    }
+
+    res.sendFile(path.join(__dirname, "../../uploads/default-placeholder.png"));
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function updateFile(req, res, next) {
   try {
     if (!req.nameFile) {
@@ -37,7 +37,7 @@ async function updateFile(req, res, next) {
       throw new Error("Error al subir la imagen");
     }
 
-    const event = await Event.findOne({ where: { id: req.params.id } });
+    const event = await Event.findOne({ where: { id: req.params.id } }); //req.params.id = id del evento a actualizar
 
     if (!event) {
       deleteFileLocal(req.nameFile);
@@ -55,16 +55,47 @@ async function updateFile(req, res, next) {
   }
 }
 
+async function deleteFileIfNotExists(req, res, next) {
+  try {
+    const imgageId = req.params.id; //nombre de la imagen
+
+    const event = await Event.findOne({ where: { img: imgageId } });
+
+    if (!event) {
+      console.log("eliminar imagen no usada");
+      const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
+      if (!fs.existsSync(pathImg)) {
+        res.status(404);
+        throw new Error("El archivo que deseas eliminar no existe");
+      }
+
+      fs.unlink(pathImg, (err) => {
+        if (err) {
+          console.log(
+            "ERROR: no se pudo eliminar el archivo de la ruta: ",
+            pathImg
+          );
+        }
+        response(res, null, `Imagen ${imgageId} eliminada`);
+      });
+    } else {
+      response(res, null, null);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 function deleteFile(req, res, next) {
   try {
-    const imgageId = req.params.id;
+    const imgageId = req.params.id; //nombre de la imagen
     const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
 
     if (!fs.existsSync(pathImg)) {
       res.status(404);
       throw new Error("El archivo que deseas eliminar no existe");
     }
-    
+
     fs.unlink(pathImg, (err) => {
       if (err) {
         console.log(
@@ -98,5 +129,6 @@ module.exports = {
   returnFile,
   uploadFile,
   updateFile,
-  deleteFile
+  deleteFile,
+  deleteFileIfNotExists,
 };
