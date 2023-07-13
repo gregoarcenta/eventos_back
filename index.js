@@ -17,15 +17,16 @@ const password = require("./routes/password.routes");
 const jenkins = require("./routes/jenkins.routes");
 const documents = require("./routes/document.routes");
 const services = require("./routes/services.routes");
+const localities = require("./routes/localities.routes");
 const provinces = require("./routes/provinces.routes");
 const contact = require("./routes/contact.routes");
 const events = require("./routes/event.routes");
 const cities = require("./routes/city.routes");
 const user = require("./routes/user.routes");
 const upload = require("./routes/upload.routes");
+const places = require("./routes/place.routes");
 
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
-
 
 const {
   validateDomains,
@@ -53,8 +54,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Middlewares
-app.use(express.json({limit:"50mb"}));
-app.use(express.urlencoded({ extended: true, limit:"50mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Routes
 app.use("/login", sessions);
@@ -65,8 +66,10 @@ app.use("/events", events);
 app.use("/contact", contact);
 app.use("/documents", documents);
 app.use("/services", services);
+app.use("/localities", localities);
 app.use("/provinces", provinces);
 app.use("/cities", cities);
+app.use("/places", places);
 app.use("/upload", upload);
 app.use(notFound);
 app.use(errorHandler);

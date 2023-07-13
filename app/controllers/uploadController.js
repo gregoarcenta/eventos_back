@@ -3,6 +3,21 @@ const path = require("path");
 const Event = require("../models/Event");
 const { response } = require("../middlewares/responseMiddleware");
 
+function deleteFileLocal(imgName) {
+  const oldPath = `./uploads/eventos/${imgName}`;
+
+  if (fs.existsSync(oldPath)) {
+    fs.unlink(oldPath, (err) => {
+      if (err) {
+        console.log(
+          "ERROR: no se pudo eliminar el archivo de la ruta: ",
+          oldPath
+        );
+      }
+    });
+  }
+}
+
 function uploadFile(req, res, next) {
   try {
     if (!req.nameFile) {
@@ -17,7 +32,7 @@ function uploadFile(req, res, next) {
 
 function returnFile(req, res, next) {
   try {
-    const imgageId = req.params.id; //nombre de la imagen
+    const imgageId = req.params.id; // nombre de la imagen
     const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
 
     if (fs.existsSync(pathImg)) {
@@ -37,7 +52,7 @@ async function updateFile(req, res, next) {
       throw new Error("Error al subir la imagen");
     }
 
-    const event = await Event.findOne({ where: { id: req.params.id } }); //req.params.id = id del evento a actualizar
+    const event = await Event.findOne({ where: { id: req.params.id } }); // req.params.id = id del evento a actualizar
 
     if (!event) {
       deleteFileLocal(req.nameFile);
@@ -57,12 +72,11 @@ async function updateFile(req, res, next) {
 
 async function deleteFileIfNotExists(req, res, next) {
   try {
-    const imgageId = req.params.id; //nombre de la imagen
+    const imgageId = req.params.id; // nombre de la imagen
 
     const event = await Event.findOne({ where: { img: imgageId } });
 
     if (!event) {
-      console.log("eliminar imagen no usada");
       const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
       if (!fs.existsSync(pathImg)) {
         res.status(404);
@@ -88,7 +102,7 @@ async function deleteFileIfNotExists(req, res, next) {
 
 function deleteFile(req, res, next) {
   try {
-    const imgageId = req.params.id; //nombre de la imagen
+    const imgageId = req.params.id; // nombre de la imagen
     const pathImg = path.join(__dirname, `../../uploads/eventos/${imgageId}`);
 
     if (!fs.existsSync(pathImg)) {
@@ -107,21 +121,6 @@ function deleteFile(req, res, next) {
     });
   } catch (error) {
     next(error);
-  }
-}
-
-function deleteFileLocal(imgName) {
-  const oldPath = `./uploads/eventos/${imgName}`;
-
-  if (fs.existsSync(oldPath)) {
-    fs.unlink(oldPath, (err) => {
-      if (err) {
-        console.log(
-          "ERROR: no se pudo eliminar el archivo de la ruta: ",
-          oldPath
-        );
-      }
-    });
   }
 }
 
