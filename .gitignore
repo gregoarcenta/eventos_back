@@ -2,6 +2,8 @@ node_modules/
 package.json
 .env
 
+
+
 # IDEs and editors
 /.idea
 .project
