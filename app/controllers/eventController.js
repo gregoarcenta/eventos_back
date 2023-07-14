@@ -11,6 +11,28 @@ const User = require("../models/User");
 const PlaceLocality = require("../models/PlaceLocality");
 const Locality = require("../models/Locality");
 
+function formateaMomento(momento) {
+  const regexp = /\d\d:\d\d(:\d\d)?/;
+  if (regexp.test(momento)) {
+    const units = momento.split(":");
+    return +units[0] * 3600 + +units[1] * 60 + (+units[2] || 0);
+  }
+  throw new Error("Formato de hora invalido");
+}
+
+function generadorHorario(horaApertura, horaCierre) {
+  let a = formateaMomento(horaApertura);
+  let c = formateaMomento(horaCierre);
+
+  return function (hora) {
+    const h = formateaMomento(hora);
+    if (a > c) {
+      return h >= a || h <= c;
+    }
+    return h >= a && h <= c;
+  };
+}
+
 async function index(req, res, next) {
   try {
     const events = await Event.findAll({
@@ -158,27 +180,7 @@ async function searchEvent(req, res, next) {
   }
 }
 
-function formateaMomento(momento) {
-  const regexp = /\d\d:\d\d(:\d\d)?/;
-  if (regexp.test(momento)) {
-    const units = momento.split(":");
-    return +units[0] * 3600 + +units[1] * 60 + (+units[2] || 0);
-  }
-  throw new Error("Formato de hora invalido");
-}
 
-function generadorHorario(horaApertura, horaCierre) {
-  let a = formateaMomento(horaApertura);
-  let c = formateaMomento(horaCierre);
-
-  return function (hora) {
-    const h = formateaMomento(hora);
-    if (a > c) {
-      return h >= a || h <= c;
-    }
-    return h >= a && h <= c;
-  };
-}
 
 module.exports = {
   index,
