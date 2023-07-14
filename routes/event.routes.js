@@ -13,7 +13,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(verifyToken, eventController.index)
+  .get(verifyToken, eventController.getAllEvents)
   .post(
     verifyToken,
     checkSchema(registerEventSchema),
@@ -21,7 +21,10 @@ router
     userController.find,
     eventController.create
   );
-  
+
+router.route("/featured").get(eventController.getFeaturedEvents);
+router.route("/upcoming").get(eventController.getUpcomingEvents);
+
 router.route("/:id").get(verifyToken, eventController.getEventById);
 
 router.route("/search/:term").get(verifyToken, eventController.searchEvent);

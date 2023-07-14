@@ -33,7 +33,7 @@ function generadorHorario(horaApertura, horaCierre) {
   };
 }
 
-async function index(req, res, next) {
+async function getAllEvents(req, res, next) {
   try {
     const events = await Event.findAll({
       include: [
@@ -47,7 +47,53 @@ async function index(req, res, next) {
         },
         { model: Service },
       ],
-      order: [['created_at', 'DESC']]
+      order: [["created_at", "DESC"]],
+    });
+    response(res, events, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getFeaturedEvents(req, res, next) {
+  try {
+    const events = await Event.findAll({
+      where: { outstanding: true },
+      include: [
+        {
+          model: Place,
+          include: [{ model: Direction, include: [Province, City] }],
+        },
+        {
+          model: PlaceLocality,
+          include: [Locality],
+        },
+        { model: Service },
+      ],
+      order: [["created_at", "DESC"]],
+    });
+    response(res, events, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getUpcomingEvents(req, res, next) {
+  try {
+    const events = await Event.findAll({
+      include: [
+        {
+          model: Place,
+          include: [{ model: Direction, include: [Province, City] }],
+        },
+        {
+          model: PlaceLocality,
+          include: [Locality],
+        },
+        { model: Service },
+      ],
+      order: [["created_at", "DESC"]],
+      limit: 8,
     });
     response(res, events, null);
   } catch (error) {
@@ -88,7 +134,7 @@ async function create(req, res, next) {
       "end_date",
       "end_time",
       "service_id",
-      "place_id"
+      "place_id",
     ];
 
     if (!req.user) {
@@ -180,10 +226,10 @@ async function searchEvent(req, res, next) {
   }
 }
 
-
-
 module.exports = {
-  index,
+  getAllEvents,
+  getFeaturedEvents,
+  getUpcomingEvents,
   create,
   searchEvent,
   getEventById,
