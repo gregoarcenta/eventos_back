@@ -25,6 +25,7 @@ async function index(req, res, next) {
         },
         { model: Service },
       ],
+      order: [['created_at', 'DESC']]
     });
     response(res, events, null);
   } catch (error) {

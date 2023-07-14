@@ -44,6 +44,11 @@ module.exports = {
       notEmpty: true,
       trim: true,
       errorMessage: "El servicio del evento es requerido",
-    }
+    },
+    place_localities: {
+      isArray: true,
+      notEmpty: true,
+      errorMessage: "La localidad del evento es requerida",
+    },
   },
 };

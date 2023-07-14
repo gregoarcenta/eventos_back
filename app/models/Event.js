@@ -40,6 +40,7 @@ Event.init(
     },
     artist: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     start_date: {
       type: DataTypes.DATEONLY,
