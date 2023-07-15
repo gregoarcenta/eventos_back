@@ -22,6 +22,7 @@ router
     eventController.create
   );
 
+router.route("/publish").get(eventController.getAllEventsPublish);
 router.route("/featured").get(eventController.getFeaturedEvents);
 router.route("/upcoming").get(eventController.getUpcomingEvents);
 

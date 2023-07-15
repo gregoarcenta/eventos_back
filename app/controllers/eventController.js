@@ -55,6 +55,28 @@ async function getAllEvents(req, res, next) {
   }
 }
 
+async function getAllEventsPublish(req, res, next) {
+  try {
+    const events = await Event.findAll({
+      include: [
+        {
+          model: Place,
+          include: [{ model: Direction, include: [Province, City] }],
+        },
+        {
+          model: PlaceLocality,
+          include: [Locality],
+        },
+        { model: Service },
+      ],
+      order: [["created_at", "DESC"]],
+    });
+    response(res, events, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function getFeaturedEvents(req, res, next) {
   try {
     const events = await Event.findAll({
@@ -228,6 +250,7 @@ async function searchEvent(req, res, next) {
 
 module.exports = {
   getAllEvents,
+  getAllEventsPublish,
   getFeaturedEvents,
   getUpcomingEvents,
   create,
