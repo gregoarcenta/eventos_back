@@ -30,6 +30,10 @@ Event.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    publish: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     assistants: {
       type: DataTypes.INTEGER,
       defaultValue: 0,

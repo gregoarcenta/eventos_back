@@ -10,6 +10,7 @@ const Service = require("../models/Service");
 const User = require("../models/User");
 const PlaceLocality = require("../models/PlaceLocality");
 const Locality = require("../models/Locality");
+const { excludeFieldsUser } = require("../utils/utils");
 
 function formateaMomento(momento) {
   const regexp = /\d\d:\d\d(:\d\d)?/;
@@ -46,10 +47,16 @@ async function getAllEvents(req, res, next) {
           include: [Locality],
         },
         { model: Service },
+        { model: User },
       ],
       order: [["created_at", "DESC"]],
     });
-    response(res, events, null);
+
+    const newEvents = events.map((event) => {
+      const data = event.toJSON();
+      return { ...data, user: excludeFieldsUser(data.user)};
+    });
+    response(res, newEvents, null);
   } catch (error) {
     next(error);
   }
@@ -58,6 +65,7 @@ async function getAllEvents(req, res, next) {
 async function getAllEventsPublish(req, res, next) {
   try {
     const events = await Event.findAll({
+      where: { publish: true },
       include: [
         {
           model: Place,
@@ -139,6 +147,22 @@ async function getEventById(req, res, next) {
   }
 }
 
+async function getEventPublishById(req, res, next) {
+  try {
+    const { id } = req.params;
+    /*     const event = await Event.findOne({
+      where: { id },
+    });
+    if (!event) {
+      res.status(404);
+      throw new Error("El evento al que intentas acceder no existe");
+    } */
+    response(res, [], null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function create(req, res, next) {
   try {
     const { place_id, place } = req.body;
@@ -148,6 +172,7 @@ async function create(req, res, next) {
       "description",
       "img",
       "outstanding",
+      "publish",
       "assistants",
       "organizer",
       "artist",
@@ -157,6 +182,7 @@ async function create(req, res, next) {
       "end_time",
       "service_id",
       "place_id",
+      "user_id",
     ];
 
     if (!req.user) {
@@ -166,7 +192,7 @@ async function create(req, res, next) {
       );
     }
 
-    const { id } = req.user;
+    const { id, username } = req.user;
 
     // Valida que no se cree un evento en el mismo horario
     if (place_id) {
@@ -215,6 +241,11 @@ async function create(req, res, next) {
       req.body.place_id = newPlaceCreated.id;
     }
 
+    req.body.user_id = id;
+    if (!req.body.organizer) {
+      req.body.organizer = username;
+    }
+
     await Event.create({ ...req.body }, { fields, include: [PlaceLocality] });
     response(res, null, "Evento agregado correctamente", 201);
   } catch (error) {
@@ -222,9 +253,9 @@ async function create(req, res, next) {
   }
 }
 
-async function searchEvent(req, res, next) {
+async function searchEvents(req, res, next) {
   try {
-    const { term } = req.params;
+    const { term } = req.body;
     const fragmentoBusqueda = `%${term}%`;
     const events = await Event.findAll({
       where: {
@@ -248,12 +279,41 @@ async function searchEvent(req, res, next) {
   }
 }
 
+async function searchEventsPublish(req, res, next) {
+  try {
+    const { conditions } = req.body;
+    console.log(conditions);
+    /* const fragmentoBusqueda = `%${term}%`;
+    const events = await Event.findAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.iLike]: fragmentoBusqueda,
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: fragmentoBusqueda,
+            },
+          },
+        ],
+      },
+    }); */
+    response(res, [], null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   getAllEvents,
   getAllEventsPublish,
   getFeaturedEvents,
   getUpcomingEvents,
-  create,
-  searchEvent,
   getEventById,
+  getEventPublishById,
+  create,
+  searchEvents,
+  searchEventsPublish,
 };

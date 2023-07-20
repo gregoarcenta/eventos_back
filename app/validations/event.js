@@ -15,11 +15,11 @@ module.exports = {
       trim: true,
       errorMessage: "La imagen es requerida",
     },
-    organizer: {
+    /* organizer: {
       notEmpty: true,
       trim: true,
       errorMessage: "El nombre del organizador es requerido",
-    },
+    }, */
     start_date: {
       notEmpty: true,
       trim: true,

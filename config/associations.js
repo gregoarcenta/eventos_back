@@ -142,6 +142,31 @@ Contact.belongsTo(City, {
 
 /**
  *
+ * Un usuario puede crear muchos eventos
+ * y un evento puede ser solo se un usuario
+ *
+ */
+
+User.hasMany(Event, {
+  foreignKey: {
+    allowNull: false,
+    name: "user_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Event.belongsTo(User, {
+  foreignKey: {
+    allowNull: false,
+    name: "user_id",
+  },
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+
+
+/**
+ *
  * Un evento solo puede estar asigando a un solo lugar
  * y un lugar puede estar asignado a varios eventos pero con distintos horarios
  *
