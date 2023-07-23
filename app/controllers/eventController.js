@@ -54,7 +54,7 @@ async function getAllEvents(req, res, next) {
 
     const newEvents = events.map((event) => {
       const data = event.toJSON();
-      return { ...data, user: excludeFieldsUser(data.user)};
+      return { ...data, user: excludeFieldsUser(data.user) };
     });
     response(res, newEvents, null);
   } catch (error) {
@@ -88,7 +88,7 @@ async function getAllEventsPublish(req, res, next) {
 async function getFeaturedEvents(req, res, next) {
   try {
     const events = await Event.findAll({
-      where: { outstanding: true },
+      where: { outstanding: true, publish: true },
       include: [
         {
           model: Place,
@@ -111,6 +111,7 @@ async function getFeaturedEvents(req, res, next) {
 async function getUpcomingEvents(req, res, next) {
   try {
     const events = await Event.findAll({
+      where: { publish: true },
       include: [
         {
           model: Place,
@@ -150,13 +151,13 @@ async function getEventById(req, res, next) {
 async function getEventPublishById(req, res, next) {
   try {
     const { id } = req.params;
-    /*     const event = await Event.findOne({
-      where: { id },
+    const event = await Event.findOne({
+      where: { id, publish: true },
     });
     if (!event) {
       res.status(404);
       throw new Error("El evento al que intentas acceder no existe");
-    } */
+    }
     response(res, [], null);
   } catch (error) {
     next(error);
