@@ -5,6 +5,7 @@ const Role = require("../models/Role");
 const User = require("../models/User");
 const { verifyMail } = require("../utils/sendMail");
 const { excludeFieldsUser } = require("../utils/utils");
+const { Op, Sequelize } = require("sequelize");
 
 async function find(req, res, next) {
   try {
@@ -109,7 +110,9 @@ async function updateImgProfile(req, res, next) {
   try {
     if (!req.user) {
       res.status(422);
-      throw new Error("El usuario en el que intentas actualizar la imagen no existe");
+      throw new Error(
+        "El usuario en el que intentas actualizar la imagen no existe"
+      );
     }
     const { img } = req.body;
     await User.update({ img }, { where: { id: req.user.id }, fields: ["img"] });
@@ -138,20 +141,6 @@ async function getUserByEmail(req, res, next) {
   }
 }
 
-async function getUserByUsername(req, res, next) {
-  const username = req.params.username;
-  try {
-    const user = await User.findOne({ where: { username } });
-    if (user) {
-      response(res, { valid: false }, null);
-    } else {
-      response(res, { valid: true }, null);
-    }
-  } catch (error) {
-    next(error);
-  }
-}
-
 async function getUserByDocument(req, res, next) {
   const num_document = req.params.num_document;
   try {
@@ -166,6 +155,52 @@ async function getUserByDocument(req, res, next) {
   }
 }
 
+async function getUserByUsername(req, res, next) {
+  const username = req.params.username;
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (user) {
+      response(res, { valid: false }, null);
+    } else {
+      response(res, { valid: true }, null);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getUsersByUsernameOrName(req, res, next) {
+  const { term } = req.body;
+  const fragmentoBusqueda = `%${term}%`;
+  try {
+    const users = await User.findAll({
+      where: {
+        [Op.or]: [
+          {
+            [Op.or]: [
+              Sequelize.literal("unaccent(name || ' ' || surname) ILIKE unaccent(:searchTerm)"),
+              Sequelize.literal("unaccent(surname || ' ' || name) ILIKE unaccent(:searchTerm)"),
+            ],
+          },
+          {
+            username: {
+              [Op.iLike]: fragmentoBusqueda,
+            },
+          },
+        ],
+      },
+      replacements: {
+        searchTerm: fragmentoBusqueda,
+      },
+    });
+
+    const newUsers = users.map((user) => excludeFieldsUser(user.toJSON()));
+    response(res, newUsers, null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   find,
   create,
@@ -174,4 +209,5 @@ module.exports = {
   getUserByEmail,
   getUserByDocument,
   getUserByUsername,
+  getUsersByUsernameOrName,
 };

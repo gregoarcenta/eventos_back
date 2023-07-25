@@ -31,6 +31,7 @@ router
 
 router
   .route("/")
+  .post(verifyToken, userController.getUsersByUsernameOrName)
   .put(
     verifyToken,
     checkSchema(updateSchema),
