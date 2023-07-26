@@ -458,7 +458,6 @@ async function getCitiesEvents(req, res, next) {
               include: [
                 {
                   model: City,
-                  attributes: ['name'], // Obtener solo el nombre de la ciudad.
                 },
               ],
             },
@@ -468,7 +467,14 @@ async function getCitiesEvents(req, res, next) {
       attributes: [], // Excluimos atributos del evento, no los necesitamos en el resultado.
     });
 
-    const uniqueCities = new Set(citiesWithNullUserId.map(event => event.place.direction.city.name));
+    const uniqueCities = new Set(
+      citiesWithNullUserId.map((event) => {
+        return {
+          id: event.place.direction.city.id,
+          name: event.place.direction.city.name,
+        };
+      })
+    );
     response(res, [...uniqueCities], null);
   } catch (error) {
     next(error);
@@ -486,5 +492,5 @@ module.exports = {
   update,
   searchEvents,
   searchEventsPublish,
-  getCitiesEvents
+  getCitiesEvents,
 };
