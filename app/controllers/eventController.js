@@ -446,6 +446,7 @@ async function searchEventsPublish(req, res, next) {
 async function getCitiesEvents(req, res, next) {
   try {
     const citiesWithNullUserId = await Event.findAll({
+      where: { publish: true },
       include: [
         {
           model: Place,
