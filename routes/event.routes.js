@@ -40,6 +40,7 @@ router
 router.route("/publish").get(eventController.getAllEventsPublish);
 router.route("/featured").get(eventController.getFeaturedEvents);
 router.route("/upcoming").get(eventController.getUpcomingEvents);
+router.route("/cities").get(eventController.getCitiesEvents);
 router.route("/search/publish").post(eventController.searchEventsPublish);
 router.route("/:id").get(eventController.getEventPublishById);
 

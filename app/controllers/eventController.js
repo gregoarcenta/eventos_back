@@ -358,11 +358,11 @@ async function update(req, res, next) {
       req.body.event.organizer = username;
     }
 
-    const listaExistente = []
+    const listaExistente = [];
     for await (const localityData of req.body.event.place_localities) {
       const { localityId, ...data } = localityData;
       if (localityId) {
-        listaExistente.push(localityId)
+        listaExistente.push(localityId);
         // Si la localidad existe, actualiza sus datos.
         await PlaceLocality.update({ ...data }, { where: { id: localityId } });
       } else {
@@ -443,6 +443,38 @@ async function searchEventsPublish(req, res, next) {
   }
 }
 
+async function getCitiesEvents(req, res, next) {
+  try {
+    const citiesWithNullUserId = await Event.findAll({
+      include: [
+        {
+          model: Place,
+          where: {
+            user_id: null, // Condición para el user_id nulo en el lugar (place).
+          },
+          include: [
+            {
+              model: Direction,
+              include: [
+                {
+                  model: City,
+                  attributes: ['name'], // Obtener solo el nombre de la ciudad.
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: [], // Excluimos atributos del evento, no los necesitamos en el resultado.
+    });
+
+    const uniqueCities = new Set(citiesWithNullUserId.map(event => event.place.direction.city.name));
+    response(res, [...uniqueCities], null);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   getAllEvents,
   getAllEventsPublish,
@@ -454,4 +486,5 @@ module.exports = {
   update,
   searchEvents,
   searchEventsPublish,
+  getCitiesEvents
 };
