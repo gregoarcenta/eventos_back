@@ -52,7 +52,7 @@ async function authenticate(req, res, next) {
 function generateToken(req, res, next) {
   if (!req.user) return next();
   req.token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1m",
   });
   next();
 }
