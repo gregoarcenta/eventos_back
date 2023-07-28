@@ -367,7 +367,8 @@ async function update(req, res, next) {
         await PlaceLocality.update({ ...data }, { where: { id: localityId } });
       } else {
         // Si la localidad no existe, crea una nueva.
-        await PlaceLocality.create({ ...data, event_id: req.body.eventId });
+        const response = await PlaceLocality.create({ ...data, event_id: req.body.eventId });
+        listaExistente.push(response.id);
       }
     }
     // Buscar las localidades existentes que no están presentes en el arreglo y eliminarlas.
