@@ -367,7 +367,10 @@ async function update(req, res, next) {
         await PlaceLocality.update({ ...data }, { where: { id: localityId } });
       } else {
         // Si la localidad no existe, crea una nueva.
-        const response = await PlaceLocality.create({ ...data, event_id: req.body.eventId });
+        const response = await PlaceLocality.create({
+          ...data,
+          event_id: req.body.eventId,
+        });
         listaExistente.push(response.id);
       }
     }
@@ -420,25 +423,64 @@ async function searchEvents(req, res, next) {
 async function searchEventsPublish(req, res, next) {
   try {
     const { conditions } = req.body;
-    console.log(conditions);
-    /* const fragmentoBusqueda = `%${term}%`;
+    const whereConditions = { publish: true };
+    if (conditions.city) {
+      whereConditions["$place.direction.city_id$"] = conditions.city;
+    }
+    if (conditions.type) {
+      whereConditions.service_id = conditions.type;
+    }
+    if (conditions.start_date && conditions.end_date) {
+      whereConditions.start_date = {
+        [Op.between]: [conditions.start_date, conditions.end_date],
+      };
+    } else if (conditions.start_date) {
+      whereConditions.start_date = {
+        [Op.gte]: conditions.start_date,
+      };
+    } else if (conditions.end_date) {
+      whereConditions.start_date = {
+        [Op.lte]: conditions.end_date,
+      };
+    }
+
+    if (conditions.outstanding) {
+      whereConditions.outstanding = conditions.outstanding;
+    }
+
+    if (conditions.term) {
+      const fragmentoBusqueda = `%${conditions.term}%`;
+      whereConditions[Op.or] = [
+        {
+          name: {
+            [Op.iLike]: fragmentoBusqueda,
+          },
+        },
+        {
+          description: {
+            [Op.iLike]: fragmentoBusqueda,
+          },
+        },
+      ];
+    }
+    // console.log(whereConditions);
+
     const events = await Event.findAll({
-      where: {
-        [Op.or]: [
-          {
-            name: {
-              [Op.iLike]: fragmentoBusqueda,
+      where: whereConditions,
+      include: [
+        {
+          model: Place,
+          as: "place", // Alias para referenciar la relación con la tabla places
+          include: [
+            {
+              model: Direction,
+              as: "direction", // Alias para referenciar la relación con la tabla directions
             },
-          },
-          {
-            description: {
-              [Op.iLike]: fragmentoBusqueda,
-            },
-          },
-        ],
-      },
-    }); */
-    response(res, [], null);
+          ],
+        },
+      ],
+    });
+    response(res, events, null);
   } catch (error) {
     next(error);
   }
@@ -468,15 +510,17 @@ async function getCitiesEvents(req, res, next) {
       ],
       attributes: [], // Excluimos atributos del evento, no los necesitamos en el resultado.
     });
+    const cityMap = new Map();
+    citiesWithNullUserId.forEach((event) => {
+      const cityId = event.place.direction.city.id;
+      const cityName = event.place.direction.city.name;
+      if (!cityMap.has(cityId)) {
+        cityMap.set(cityId, { id: cityId, name: cityName });
+      }
+    });
 
-    const uniqueCities = new Set(
-      citiesWithNullUserId.map((event) => {
-        return {
-          id: event.place.direction.city.id,
-          name: event.place.direction.city.name,
-        };
-      })
-    );
+    // Extraer las ciudades únicas del mapa
+    const uniqueCities = Array.from(cityMap.values());
     response(res, [...uniqueCities], null);
   } catch (error) {
     next(error);
