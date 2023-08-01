@@ -452,10 +452,10 @@ async function searchEventsPublish(req, res, next) {
       const fragmentoBusqueda = `%${conditions.term}%`;
       whereConditions[Op.or] = [
         Sequelize.literal(
-          `unaccent(name) ILIKE unaccent('%${fragmentoBusqueda}%')`
+          `unaccent("event"."name") ILIKE unaccent('%${fragmentoBusqueda}%')`
         ),
         Sequelize.literal(
-          `unaccent(description) ILIKE unaccent('%${fragmentoBusqueda}%')`
+          `unaccent("event"."description") ILIKE unaccent('%${fragmentoBusqueda}%')`
         ),
       ];
     }
