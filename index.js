@@ -13,7 +13,8 @@ require("./config/associations");
 // Imports routes
 const sessions = require("./routes/sessions.routes");
 const register = require("./routes/register.routes");
-const password = require("./routes/password.routes");
+const recoverPassword = require("./routes/recover-password.routes");
+const changePassword = require("./routes/change-password.routes");
 const jenkins = require("./routes/jenkins.routes");
 const documents = require("./routes/document.routes");
 const services = require("./routes/services.routes");
@@ -27,6 +28,7 @@ const upload = require("./routes/upload.routes");
 const places = require("./routes/place.routes");
 
 const { notFound, errorHandler } = require("./app/middlewares/errorMiddleware");
+
 
 const {
   validateDomains,
@@ -61,7 +63,8 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use("/login", sessions);
 app.use("/register", register);
 app.use("/user", user);
-app.use("/recover", password);
+app.use("/recover", recoverPassword);
+app.use("/change-password", changePassword);
 app.use("/events", events);
 app.use("/contact", contact);
 app.use("/documents", documents);
