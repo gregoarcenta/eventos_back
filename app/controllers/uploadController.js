@@ -64,7 +64,7 @@ async function updateFile(req, res, next) {
     event.img = req.nameFile;
     await event.save();
 
-    response(res, null, "La imagen fue actualizada con exito!");
+    response(res, req.nameFile, "La imagen fue actualizada con exito!");
   } catch (error) {
     next(error);
   }
