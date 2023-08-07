@@ -14,6 +14,10 @@ Event.init(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    cancelled:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,

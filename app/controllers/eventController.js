@@ -297,8 +297,7 @@ async function update(req, res, next) {
       "end_date",
       "end_time",
       "service_id",
-      "place_id",
-      "user_id",
+      "place_id"
     ];
 
     const { id, username } = req.user;
@@ -353,7 +352,6 @@ async function update(req, res, next) {
       req.body.event.place_id = newPlaceCreated.id;
     }
 
-    req.body.user_id = id;
     if (!req.body.event.organizer) {
       req.body.event.organizer = username;
     }
@@ -389,6 +387,141 @@ async function update(req, res, next) {
       { where: { id: req.body.eventId }, fields }
     );
     response(res, null, "Evento actualizado correctamente", 200);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateGeneralData(req, res, next) {
+  try {
+    const { username } = req.user;
+    let fields = [
+      "name",
+      "description",
+      "img",
+      "outstanding",
+      "publish",
+      "organizer",
+      "artist",
+      "service_id"
+    ];
+
+    if (!req.body.event.organizer) {
+      req.body.event.organizer = username;
+    }
+
+    await Event.update(
+      { ...req.body.event },
+      { where: { id: req.body.eventId }, fields }
+    );
+    response(res, null, "Información general del evento actualizada correctamente!");
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updatePlaceData(req, res, next) {
+  try {
+    let fields = [
+      "start_date",
+      "start_time",
+      "end_date",
+      "end_time",
+      "place_id"
+    ];
+    const { place_id, place } = req.body.event;
+    const { id } = req.user;
+    let newPlaceCreated = null;
+
+    // Valida que no se cree un evento en el mismo horario
+    if (place_id) {
+      const events = await Event.findAll({
+        where: {
+          id: {
+            [Op.ne]: req.body.eventId,
+          },
+          place_id: req.body.event.place_id,
+          start_date: req.body.event.start_date,
+        },
+      });
+      if (events.length > 0) {
+        events.forEach((e) => {
+          const event = e.toJSON();
+          if (
+            generadorHorario(
+              event.start_time,
+              event.end_time
+            )(req.body.event.start_time)
+          ) {
+            throw new Error("Ya existe un evento en ese mismo horario");
+          }
+        });
+      }
+    }
+
+    // Si no existe el place_id significa que creo un lugar que no estaba en los del default
+    if (!place_id) {
+      const user = await User.findOne({ where: { id }, include: [Role] });
+      newPlaceCreated = await Place.create(
+        {
+          name: place.name,
+          user_id: user.role.name === "ADMIN" ? null : user.id,
+          direction: {
+            description: place.description,
+            reference: place.reference,
+            province_id: place.province_id,
+            city_id: place.city_id,
+            lat: place.lat,
+            lng: place.lng,
+          },
+        },
+        {
+          include: [Direction],
+        }
+      );
+
+      req.body.event.place_id = newPlaceCreated.id;
+    }
+
+    await Event.update(
+      { ...req.body.event },
+      { where: { id: req.body.eventId }, fields }
+    );
+    response(res, null, "Lugar del evento actualizado correctamente!");
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateLocalitiesData(req, res, next) {
+  try {
+    const listaExistente = [];
+    for await (const localityData of req.body.event.place_localities) {
+      const { localityId, ...data } = localityData;
+      if (localityId) {
+        listaExistente.push(localityId);
+        // Si la localidad existe, actualiza sus datos.
+        await PlaceLocality.update({ ...data }, { where: { id: localityId } });
+      } else {
+        // Si la localidad no existe, crea una nueva.
+        const response = await PlaceLocality.create({
+          ...data,
+          event_id: req.body.eventId,
+        });
+        listaExistente.push(response.id);
+      }
+    }
+    // Buscar las localidades existentes que no están presentes en el arreglo y eliminarlas.
+    await PlaceLocality.destroy({
+      where: {
+        event_id: req.body.eventId,
+        id: {
+          [Sequelize.Op.notIn]: listaExistente,
+        },
+      },
+    });
+
+    response(res, null, "Localidades del evento actualizadas correctamente!");
   } catch (error) {
     next(error);
   }
@@ -532,6 +665,9 @@ module.exports = {
   getEventPublishById,
   create,
   update,
+  updateGeneralData,
+  updatePlaceData,
+  updateLocalitiesData,
   searchEvents,
   searchEventsPublish,
   getCitiesEvents,

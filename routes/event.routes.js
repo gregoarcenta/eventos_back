@@ -30,6 +30,31 @@ router
     eventController.create
   );
 router
+  .route("/general")
+  .put(
+    verifyToken,
+    userController.find,
+    verifyOwnEvent,
+    eventController.updateGeneralData
+  );
+router
+  .route("/place")
+  .put(
+    verifyToken,
+    userController.find,
+    verifyOwnEvent,
+    eventController.updatePlaceData
+  );
+router
+  .route("/localities")
+  .put(
+    verifyToken,
+    userController.find,
+    verifyOwnEvent,
+    eventController.updateLocalitiesData
+  );
+
+router
   .route("/search")
   .post(verifyToken, verifyAdmin, eventController.searchEvents);
 router
