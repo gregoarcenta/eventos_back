@@ -56,7 +56,7 @@ async function getAllEvents(req, res, next) {
       const data = event.toJSON();
       return { ...data, user: excludeFieldsUser(data.user) };
     });
-    response(res, newEvents, null);
+    response(res, { events: newEvents }, null);
   } catch (error) {
     next(error);
   }
@@ -64,6 +64,9 @@ async function getAllEvents(req, res, next) {
 
 async function getAllEventsPublish(req, res, next) {
   try {
+    const currentPage = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
+
     const events = await Event.findAll({
       where: { publish: true },
       include: [
@@ -78,8 +81,12 @@ async function getAllEventsPublish(req, res, next) {
         { model: Service },
       ],
       order: [["created_at", "DESC"]],
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize,
     });
-    response(res, events, null);
+
+    const total = await Event.count({ where: { publish: true } });
+    response(res, { events, total }, null);
   } catch (error) {
     next(error);
   }
@@ -102,7 +109,7 @@ async function getFeaturedEvents(req, res, next) {
       ],
       order: [["created_at", "DESC"]],
     });
-    response(res, events, null);
+    response(res, { events }, null);
   } catch (error) {
     next(error);
   }
@@ -126,7 +133,7 @@ async function getUpcomingEvents(req, res, next) {
       order: [["created_at", "DESC"]],
       limit: 8,
     });
-    response(res, events, null);
+    response(res, { events }, null);
   } catch (error) {
     next(error);
   }
@@ -297,7 +304,7 @@ async function update(req, res, next) {
       "end_date",
       "end_time",
       "service_id",
-      "place_id"
+      "place_id",
     ];
 
     const { id, username } = req.user;
@@ -403,7 +410,7 @@ async function updateGeneralData(req, res, next) {
       "publish",
       "organizer",
       "artist",
-      "service_id"
+      "service_id",
     ];
 
     if (!req.body.event.organizer) {
@@ -414,7 +421,11 @@ async function updateGeneralData(req, res, next) {
       { ...req.body.event },
       { where: { id: req.body.eventId }, fields }
     );
-    response(res, null, "Información general del evento actualizada correctamente!");
+    response(
+      res,
+      null,
+      "Información general del evento actualizada correctamente!"
+    );
   } catch (error) {
     next(error);
   }
@@ -427,7 +438,7 @@ async function updatePlaceData(req, res, next) {
       "start_time",
       "end_date",
       "end_time",
-      "place_id"
+      "place_id",
     ];
     const { place_id, place } = req.body.event;
     const { id } = req.user;
@@ -547,7 +558,7 @@ async function searchEvents(req, res, next) {
         ],
       },
     });
-    response(res, events, null);
+    response(res, { events }, null);
   } catch (error) {
     next(error);
   }
@@ -556,6 +567,8 @@ async function searchEvents(req, res, next) {
 async function searchEventsPublish(req, res, next) {
   try {
     const { conditions } = req.body;
+    const currentPage = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
     const whereConditions = { publish: true };
     if (conditions.city) {
       whereConditions["$place.direction.city_id$"] = conditions.city;
@@ -608,8 +621,26 @@ async function searchEventsPublish(req, res, next) {
           ],
         },
       ],
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize,
     });
-    response(res, events, null);
+
+    const total = await Event.count({
+      where: whereConditions,
+      include: [
+        {
+          model: Place,
+          as: "place", 
+          include: [
+            {
+              model: Direction,
+              as: "direction",
+            },
+          ],
+        },
+      ],
+    });
+    response(res, { events, total }, null);
   } catch (error) {
     next(error);
   }
