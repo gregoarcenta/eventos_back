@@ -172,6 +172,10 @@ async function getEventById(req, res, next) {
 async function getEventPublishById(req, res, next) {
   try {
     const { id } = req.params;
+    if (isNaN(id)) {
+      res.status(404);
+      throw new Error("El evento al que intentas acceder no existe");
+    }
     const event = await Event.findOne({
       where: { id, publish: true },
       include: [
@@ -184,13 +188,16 @@ async function getEventPublishById(req, res, next) {
           include: [Locality],
         },
         { model: Service },
+        { model: User },
       ],
     });
     if (!event) {
       res.status(404);
       throw new Error("El evento al que intentas acceder no existe");
     }
-    response(res, [], null);
+    const dataEvent = event.toJSON();
+    const newEvent = { ...dataEvent, user: excludeFieldsUser(dataEvent.user) };
+    response(res, newEvent, null);
   } catch (error) {
     next(error);
   }
@@ -630,7 +637,7 @@ async function searchEventsPublish(req, res, next) {
       include: [
         {
           model: Place,
-          as: "place", 
+          as: "place",
           include: [
             {
               model: Direction,
