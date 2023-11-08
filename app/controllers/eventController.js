@@ -1,4 +1,4 @@
-const { Op, where, Sequelize } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const { response } = require("../middlewares/responseMiddleware");
 const City = require("../models/City");
 const Direction = require("../models/Direction");
@@ -40,16 +40,16 @@ async function getAllEvents(req, res, next) {
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
         { model: Service },
-        { model: User },
+        { model: User }
       ],
-      order: [["created_at", "DESC"]],
+      order: [["created_at", "DESC"]]
     });
 
     const newEvents = events.map((event) => {
@@ -72,17 +72,17 @@ async function getAllEventsPublish(req, res, next) {
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
-        { model: Service },
+        { model: Service }
       ],
       order: [["created_at", "DESC"]],
       limit: pageSize,
-      offset: (currentPage - 1) * pageSize,
+      offset: (currentPage - 1) * pageSize
     });
 
     const total = await Event.count({ where: { publish: true } });
@@ -99,15 +99,15 @@ async function getFeaturedEvents(req, res, next) {
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
-        { model: Service },
+        { model: Service }
       ],
-      order: [["created_at", "DESC"]],
+      order: [["created_at", "DESC"]]
     });
     response(res, { events }, null);
   } catch (error) {
@@ -122,16 +122,16 @@ async function getUpcomingEvents(req, res, next) {
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
-        { model: Service },
+        { model: Service }
       ],
       order: [["created_at", "DESC"]],
-      limit: 8,
+      limit: 8
     });
     response(res, { events }, null);
   } catch (error) {
@@ -147,15 +147,15 @@ async function getEventById(req, res, next) {
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
         { model: Service },
-        { model: User },
-      ],
+        { model: User }
+      ]
     });
     if (!event) {
       res.status(404);
@@ -176,20 +176,21 @@ async function getEventPublishById(req, res, next) {
       res.status(404);
       throw new Error("El evento al que intentas acceder no existe");
     }
+
     const event = await Event.findOne({
       where: { id, publish: true },
       include: [
         {
           model: Place,
-          include: [{ model: Direction, include: [Province, City] }],
+          include: [{ model: Direction, include: [Province, City] }]
         },
         {
           model: PlaceLocality,
-          include: [Locality],
+          include: [Locality]
         },
         { model: Service },
-        { model: User },
-      ],
+        { model: User }
+      ]
     });
     if (!event) {
       res.status(404);
@@ -222,7 +223,7 @@ async function create(req, res, next) {
       "end_time",
       "service_id",
       "place_id",
-      "user_id",
+      "user_id"
     ];
 
     if (!req.user) {
@@ -239,8 +240,8 @@ async function create(req, res, next) {
       const events = await Event.findAll({
         where: {
           place_id: req.body.place_id,
-          start_date: req.body.start_date,
-        },
+          start_date: req.body.start_date
+        }
       });
       if (events.length > 0) {
         events.forEach((e) => {
@@ -270,11 +271,11 @@ async function create(req, res, next) {
             province_id: place.province_id,
             city_id: place.city_id,
             lat: place.lat,
-            lng: place.lng,
-          },
+            lng: place.lng
+          }
         },
         {
-          include: [Direction],
+          include: [Direction]
         }
       );
 
@@ -311,7 +312,7 @@ async function update(req, res, next) {
       "end_date",
       "end_time",
       "service_id",
-      "place_id",
+      "place_id"
     ];
 
     const { id, username } = req.user;
@@ -321,11 +322,11 @@ async function update(req, res, next) {
       const events = await Event.findAll({
         where: {
           id: {
-            [Op.ne]: req.body.eventId,
+            [Op.ne]: req.body.eventId
           },
           place_id: req.body.event.place_id,
-          start_date: req.body.event.start_date,
-        },
+          start_date: req.body.event.start_date
+        }
       });
       if (events.length > 0) {
         events.forEach((e) => {
@@ -355,11 +356,11 @@ async function update(req, res, next) {
             province_id: place.province_id,
             city_id: place.city_id,
             lat: place.lat,
-            lng: place.lng,
-          },
+            lng: place.lng
+          }
         },
         {
-          include: [Direction],
+          include: [Direction]
         }
       );
 
@@ -372,16 +373,16 @@ async function update(req, res, next) {
 
     const listaExistente = [];
     for await (const localityData of req.body.event.place_localities) {
-      const { localityId, ...data } = localityData;
-      if (localityId) {
-        listaExistente.push(localityId);
+      const { id, ...data } = localityData;
+      if (id) {
+        listaExistente.push(id);
         // Si la localidad existe, actualiza sus datos.
-        await PlaceLocality.update({ ...data }, { where: { id: localityId } });
+        await PlaceLocality.update({ ...data }, { where: { id } });
       } else {
         // Si la localidad no existe, crea una nueva.
         const response = await PlaceLocality.create({
           ...data,
-          event_id: req.body.eventId,
+          event_id: req.body.eventId
         });
         listaExistente.push(response.id);
       }
@@ -391,9 +392,9 @@ async function update(req, res, next) {
       where: {
         event_id: req.body.eventId,
         id: {
-          [Sequelize.Op.notIn]: listaExistente,
-        },
-      },
+          [Sequelize.Op.notIn]: listaExistente
+        }
+      }
     });
 
     await Event.update(
@@ -418,6 +419,10 @@ async function updateGeneralData(req, res, next) {
       "organizer",
       "artist",
       "service_id",
+      "start_date",
+      "start_time",
+      "end_date",
+      "end_time"
     ];
 
     if (!req.body.event.organizer) {
@@ -445,9 +450,9 @@ async function updatePlaceData(req, res, next) {
       "start_time",
       "end_date",
       "end_time",
-      "place_id",
+      "place_id"
     ];
-    const { place_id, place } = req.body.event;
+    let { place_id, place } = req.body.event;
     const { id } = req.user;
     let newPlaceCreated = null;
 
@@ -456,11 +461,11 @@ async function updatePlaceData(req, res, next) {
       const events = await Event.findAll({
         where: {
           id: {
-            [Op.ne]: req.body.eventId,
+            [Op.ne]: req.body.eventId
           },
           place_id: req.body.event.place_id,
-          start_date: req.body.event.start_date,
-        },
+          start_date: req.body.event.start_date
+        }
       });
       if (events.length > 0) {
         events.forEach((e) => {
@@ -490,19 +495,19 @@ async function updatePlaceData(req, res, next) {
             province_id: place.province_id,
             city_id: place.city_id,
             lat: place.lat,
-            lng: place.lng,
-          },
+            lng: place.lng
+          }
         },
         {
-          include: [Direction],
+          include: [Direction]
         }
       );
 
-      req.body.event.place_id = newPlaceCreated.id;
+      place_id = newPlaceCreated.id;
     }
 
     await Event.update(
-      { ...req.body.event },
+      { place_id },
       { where: { id: req.body.eventId }, fields }
     );
     response(res, null, "Lugar del evento actualizado correctamente!");
@@ -515,16 +520,16 @@ async function updateLocalitiesData(req, res, next) {
   try {
     const listaExistente = [];
     for await (const localityData of req.body.event.place_localities) {
-      const { localityId, ...data } = localityData;
-      if (localityId) {
-        listaExistente.push(localityId);
+      const { id, ...data } = localityData;
+      if (id) {
+        listaExistente.push(id);
         // Si la localidad existe, actualiza sus datos.
-        await PlaceLocality.update({ ...data }, { where: { id: localityId } });
+        await PlaceLocality.update({ ...data }, { where: { id } });
       } else {
         // Si la localidad no existe, crea una nueva.
         const response = await PlaceLocality.create({
           ...data,
-          event_id: req.body.eventId,
+          event_id: req.body.eventId
         });
         listaExistente.push(response.id);
       }
@@ -534,12 +539,18 @@ async function updateLocalitiesData(req, res, next) {
       where: {
         event_id: req.body.eventId,
         id: {
-          [Sequelize.Op.notIn]: listaExistente,
-        },
-      },
+          [Sequelize.Op.notIn]: listaExistente
+        }
+      }
     });
 
-    response(res, null, "Localidades del evento actualizadas correctamente!");
+    const result = await PlaceLocality.findAll({
+      where: {
+        event_id: req.body.eventId
+      }
+    });
+
+    response(res, result, "Localidades del evento actualizadas correctamente!");
   } catch (error) {
     next(error);
   }
@@ -554,16 +565,16 @@ async function searchEvents(req, res, next) {
         [Op.or]: [
           {
             name: {
-              [Op.iLike]: fragmentoBusqueda,
-            },
+              [Op.iLike]: fragmentoBusqueda
+            }
           },
           {
             description: {
-              [Op.iLike]: fragmentoBusqueda,
-            },
-          },
-        ],
-      },
+              [Op.iLike]: fragmentoBusqueda
+            }
+          }
+        ]
+      }
     });
     response(res, { events }, null);
   } catch (error) {
@@ -585,15 +596,15 @@ async function searchEventsPublish(req, res, next) {
     }
     if (conditions.start_date && conditions.end_date) {
       whereConditions.start_date = {
-        [Op.between]: [conditions.start_date, conditions.end_date],
+        [Op.between]: [conditions.start_date, conditions.end_date]
       };
     } else if (conditions.start_date) {
       whereConditions.start_date = {
-        [Op.gte]: conditions.start_date,
+        [Op.gte]: conditions.start_date
       };
     } else if (conditions.end_date) {
       whereConditions.start_date = {
-        [Op.lte]: conditions.end_date,
+        [Op.lte]: conditions.end_date
       };
     }
 
@@ -609,7 +620,7 @@ async function searchEventsPublish(req, res, next) {
         ),
         Sequelize.literal(
           `unaccent("event"."description") ILIKE unaccent('%${fragmentoBusqueda}%')`
-        ),
+        )
       ];
     }
     // console.log(whereConditions);
@@ -623,13 +634,13 @@ async function searchEventsPublish(req, res, next) {
           include: [
             {
               model: Direction,
-              as: "direction", // Alias para referenciar la relación con la tabla directions
-            },
-          ],
-        },
+              as: "direction" // Alias para referenciar la relación con la tabla directions
+            }
+          ]
+        }
       ],
       limit: pageSize,
-      offset: (currentPage - 1) * pageSize,
+      offset: (currentPage - 1) * pageSize
     });
 
     const total = await Event.count({
@@ -641,11 +652,11 @@ async function searchEventsPublish(req, res, next) {
           include: [
             {
               model: Direction,
-              as: "direction",
-            },
-          ],
-        },
-      ],
+              as: "direction"
+            }
+          ]
+        }
+      ]
     });
     response(res, { events, total }, null);
   } catch (error) {
@@ -661,21 +672,21 @@ async function getCitiesEvents(req, res, next) {
         {
           model: Place,
           where: {
-            user_id: null, // Condición para el user_id nulo en el lugar (place).
+            user_id: null // Condición para el user_id nulo en el lugar (place).
           },
           include: [
             {
               model: Direction,
               include: [
                 {
-                  model: City,
-                },
-              ],
-            },
-          ],
-        },
+                  model: City
+                }
+              ]
+            }
+          ]
+        }
       ],
-      attributes: [], // Excluimos atributos del evento, no los necesitamos en el resultado.
+      attributes: [] // Excluimos atributos del evento, no los necesitamos en el resultado.
     });
     const cityMap = new Map();
     citiesWithNullUserId.forEach((event) => {
@@ -708,5 +719,5 @@ module.exports = {
   updateLocalitiesData,
   searchEvents,
   searchEventsPublish,
-  getCitiesEvents,
+  getCitiesEvents
 };
