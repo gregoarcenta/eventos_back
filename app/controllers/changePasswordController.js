@@ -2,7 +2,6 @@ const { response } = require("../middlewares/responseMiddleware");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
-// Verifica si ya existe un token valido para ya no crear otro hasta que expire
 async function verifyPassword(req, res, next) {
   try {
     const { password } = req.body;
@@ -24,7 +23,7 @@ async function verifyPassword(req, res, next) {
   }
 }
 
-// Actuqaliza la contrasena
+// Actualiza la contrasena
 async function changePassword(req, res, next) {
   try {
     const { password } = req.body;
