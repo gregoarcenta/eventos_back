@@ -11,9 +11,9 @@ exports.verifyAdmin = async (req, res, next) => {
       res.status(401);
       throw new Error("User not found");
     }
-    const responseUser = user.toJSON()
+    const userResponse = user.toJSON()
 
-    if (responseUser.role.name !== "ADMIN") {
+    if (userResponse.role.name !== "ADMIN") {
       res.status(403);
       throw new Error("Role not authorized");
     }

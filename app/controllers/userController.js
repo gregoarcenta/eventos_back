@@ -8,7 +8,7 @@ const { excludeFieldsUser } = require("../utils/utils");
 const { Op, Sequelize } = require("sequelize");
 
 async function find(req, res, next) {
-  try {
+  try { // TODO: colcoar esta funcion como middleware verifyUser solo para validar como middleware
     const user = await User.findOne({
       where: { id: req.user.id },
       include: [Role],

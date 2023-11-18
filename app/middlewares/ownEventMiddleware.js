@@ -9,10 +9,11 @@ exports.verifyOwnEvent = async (req, res, next) => {
       throw new Error("User Not Found");
     }
 
-    const event = await Event.findOne({where:{id:req.body.eventId}})
-    const eventData = event.toJSON()
+    // if (req.user.role.name === "ADMIN") return next();
 
-    if (eventData.user_id !== req.user.id) {
+    const event = await Event.findOne({ where: { id: req.body.eventId } });
+
+    if (event.user_id !== req.user.id) {
       res.status(403);
       throw new Error("User not authorized not own");
     }
