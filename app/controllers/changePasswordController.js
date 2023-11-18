@@ -6,13 +6,6 @@ async function verifyPassword(req, res, next) {
   try {
     const { password } = req.body;
 
-    if (!req.user) {
-      res.status(404);
-      throw new Error(
-        "El usuario con el que intentas crear el evento no existe"
-      );
-    }
-
     if (!bcrypt.compareSync(password, req.user.password)) {
       response(res, { valid: false }, null);
     } else {
@@ -27,13 +20,6 @@ async function verifyPassword(req, res, next) {
 async function changePassword(req, res, next) {
   try {
     const { password } = req.body;
-
-    if (!req.user) {
-      res.status(404);
-      throw new Error(
-        "El usuario con el que intentas crear el evento no existe"
-      );
-    }
 
     if (bcrypt.compareSync(password, req.user.password)) {
       res.status(404);

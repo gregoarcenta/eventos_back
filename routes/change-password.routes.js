@@ -2,7 +2,6 @@ const express = require("express");
 const { checkSchema } = require("express-validator");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
 const changePasswordController = require("../app/controllers/changePasswordController");
-const userController = require("../app/controllers/userController");
 
 const {
   changePasswordSchema,
@@ -12,6 +11,7 @@ const {
 const {
   fieldsValidator,
 } = require("../app/middlewares/fieldsValidatorMiddleware");
+const { verifyUser } = require("../app/middlewares/userMiddleware");
 
 const router = express.Router();
 
@@ -21,14 +21,14 @@ router
     verifyToken,
     checkSchema(changePasswordSchema),
     fieldsValidator,
-    userController.find,
+    verifyUser,
     changePasswordController.verifyPassword
   )
   .put(
     verifyToken,
     checkSchema(updatePasswordSchema),
     fieldsValidator,
-    userController.find,
+    verifyUser,
     changePasswordController.changePassword
   );
 
