@@ -9,7 +9,7 @@ exports.verifyOwnEvent = async (req, res, next) => {
       throw new Error("User Not Found");
     }
 
-    // if (req.user.role.name === "ADMIN") return next();
+    if (req.user.role.name === "ADMIN") return next();
 
     const event = await Event.findOne({ where: { id: req.body.eventId } });
 
