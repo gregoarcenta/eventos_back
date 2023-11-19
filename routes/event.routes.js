@@ -4,9 +4,10 @@ const eventController = require("../app/controllers/eventController");
 const userController = require("../app/controllers/userController");
 const { verifyAdmin } = require("../app/middlewares/adminMiddleware");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
+const { verifyUser } = require("../app/middlewares/userMiddleware");
 
 const {
-  fieldsValidator,
+  fieldsValidator
 } = require("../app/middlewares/fieldsValidatorMiddleware");
 const { registerEventSchema } = require("../app/validations/event");
 const { verifyOwnEvent } = require("../app/middlewares/ownEventMiddleware");
@@ -16,24 +17,19 @@ const router = express.Router();
 router
   .route("/")
   .get(verifyToken, verifyAdmin, eventController.getAllEvents)
-  .put(
-    verifyToken,
-    userController.find,
-    verifyOwnEvent,
-    eventController.update
-  )
+  .put(verifyToken, verifyUser, verifyOwnEvent, eventController.update)
   .post(
     verifyToken,
     checkSchema(registerEventSchema),
     fieldsValidator,
-    userController.find,
+    verifyUser,
     eventController.create
   );
 router
   .route("/general")
   .put(
     verifyToken,
-    userController.find,
+    verifyUser,
     verifyOwnEvent,
     eventController.updateGeneralData
   );
@@ -41,7 +37,7 @@ router
   .route("/place")
   .put(
     verifyToken,
-    userController.find,
+    verifyUser,
     verifyOwnEvent,
     eventController.updatePlaceData
   );
@@ -49,7 +45,7 @@ router
   .route("/localities")
   .put(
     verifyToken,
-    userController.find,
+    verifyUser,
     verifyOwnEvent,
     eventController.updateLocalitiesData
   );

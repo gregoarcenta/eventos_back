@@ -3,9 +3,10 @@ const { checkSchema } = require("express-validator");
 const { authSchema } = require("../app/validations/user");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
 const sessionsController = require("../app/controllers/sessionsController");
-const userController = require("../app/controllers/userController");
+const { verifyUser } = require("../app/middlewares/userMiddleware");
+
 const {
-  fieldsValidator,
+  fieldsValidator
 } = require("../app/middlewares/fieldsValidatorMiddleware");
 
 const router = express.Router();
@@ -24,7 +25,7 @@ router
   .route("/renew")
   .get(
     verifyToken,
-    userController.find,
+    verifyUser,
     sessionsController.generateToken,
     sessionsController.sendToken
   );

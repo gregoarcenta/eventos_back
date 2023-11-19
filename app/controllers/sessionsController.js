@@ -14,10 +14,13 @@ async function authenticate(req, res, next) {
   try {
     const user = await User.findOne({
       where: { [Op.or]: [{ username }, { email: username }] },
-      include: [Role],
+      include: [Role]
     });
     // Valida si existe o no el usuario
-    if (!user) return next();
+    if (!user) {
+      res.status(422);
+      throw new Error("Correo o usuario incorrecto");
+    }
 
     const domain = req.headers.referer || req.headers.referrer;
     if (
@@ -50,19 +53,14 @@ async function authenticate(req, res, next) {
 }
 
 function generateToken(req, res, next) {
-  if (!req.user) return next();
   req.token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1h"
   });
   next();
 }
 
 function sendToken(req, res, next) {
   try {
-    if (!req.user || !req.token) {
-      res.status(422);
-      throw new Error("Correo o usuario incorrecto");
-    }
     const user = excludeFieldsUser(req.user.toJSON());
     response(res, { user, jwt: req.token }, null);
   } catch (error) {
@@ -73,5 +71,5 @@ function sendToken(req, res, next) {
 module.exports = {
   authenticate,
   generateToken,
-  sendToken,
+  sendToken
 };

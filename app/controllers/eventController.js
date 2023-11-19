@@ -226,13 +226,6 @@ async function create(req, res, next) {
       "user_id"
     ];
 
-    if (!req.user) {
-      res.status(404);
-      throw new Error(
-        "El usuario con el que intentas crear el evento no existe"
-      );
-    }
-
     const { id, username } = req.user;
 
     // Valida que no se cree un evento en el mismo horario

@@ -1,9 +1,14 @@
 const express = require("express");
 const { checkSchema } = require("express-validator");
-const { updateSchema, updateImgProfileSchema } = require("../app/validations/user");
-const userController = require("../app/controllers/userController");
 const {
-  fieldsValidator,
+  updateSchema,
+  updateImgProfileSchema
+} = require("../app/validations/user");
+const userController = require("../app/controllers/userController");
+const { verifyUser } = require("../app/middlewares/userMiddleware");
+
+const {
+  fieldsValidator
 } = require("../app/middlewares/fieldsValidatorMiddleware");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
 
@@ -25,7 +30,7 @@ router
     verifyToken,
     checkSchema(updateImgProfileSchema),
     fieldsValidator,
-    userController.find,
+    verifyUser,
     userController.updateImgProfile
   );
 
@@ -36,7 +41,7 @@ router
     verifyToken,
     checkSchema(updateSchema),
     fieldsValidator,
-    userController.find,
+    verifyUser,
     userController.update
   );
 

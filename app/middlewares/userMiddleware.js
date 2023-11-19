@@ -1,7 +1,7 @@
 const Role = require("../models/Role");
 const User = require("../models/User");
 
-async function verifyUser(req, res, next) {
+exports.verifyUser = async (req, res, next) => {
   try {
     const user = await User.findOne({
       where: { id: req.user.id },
@@ -24,8 +24,4 @@ async function verifyUser(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
-
-module.exports = {
-    verifyUser
-}
+};
