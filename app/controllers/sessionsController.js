@@ -54,7 +54,7 @@ async function authenticate(req, res, next) {
 
 function generateToken(req, res, next) {
   req.token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-    expiresIn: "10s"
+    expiresIn: "1h"
   });
   next();
 }
