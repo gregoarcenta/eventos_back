@@ -51,7 +51,7 @@ async function authenticateGoogle(req, res, next) {
       return next();
     }
 
-    res.status(422);
+    res.status(403);
     throw new Error("El usuario ya cuenta con ese email registrado");
 
   } catch (error) {

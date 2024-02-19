@@ -3,7 +3,6 @@ exports.excludeFieldsUser = (user) => {
     password,
     role_id,
     email_verif,
-    google,
     status,
     role,
     created_at,
