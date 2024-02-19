@@ -1,6 +1,6 @@
 const express = require("express");
 const { checkSchema } = require("express-validator");
-const { authSchema } = require("../app/validations/user");
+const { authSchema, authGoogleSchema } = require("../app/validations/user");
 const { verifyToken } = require("../app/middlewares/authMiddleware");
 const sessionsController = require("../app/controllers/sessionsController");
 const { verifyUser } = require("../app/middlewares/userMiddleware");
@@ -17,6 +17,16 @@ router
     checkSchema(authSchema),
     fieldsValidator,
     sessionsController.authenticate,
+    sessionsController.generateToken,
+    sessionsController.sendToken
+  );
+
+router
+  .route("/google")
+  .post(
+    checkSchema(authGoogleSchema),
+    fieldsValidator,
+    sessionsController.authenticateGoogle,
     sessionsController.generateToken,
     sessionsController.sendToken
   );

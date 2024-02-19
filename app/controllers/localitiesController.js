@@ -1,6 +1,5 @@
 const { response } = require("../middlewares/responseMiddleware");
-const Locality = require("../models/Locality");
-const Service = require("../models/Service");
+const Locality = require("../models/Locality")
 
 async function getAllLocalities(req, res, next) {
   try {

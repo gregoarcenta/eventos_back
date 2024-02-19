@@ -7,6 +7,57 @@ require("dotenv").config();
 const Role = require("../models/Role");
 const User = require("../models/User");
 const { excludeFieldsUser } = require("../utils/utils");
+const { googleVerify } = require("../utils/googleVerify");
+
+async function authenticateGoogle(req, res, next) {
+  try {
+    const { email, picture, given_name, family_name } = await googleVerify(
+      req.body.tokenGoogle
+    );
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      const newUser = await User.create(
+        {
+          name: given_name,
+          surname: family_name,
+          email,
+          img: picture,
+          google: true,
+          email_verif: true,
+          username: `${given_name}${family_name}${new Date().getTime()}`,
+          password: "@@@",
+          role_id: 2
+        },
+        {
+          fields: [
+            "name",
+            "surname",
+            "email",
+            "img",
+            "google",
+            "email_verif",
+            "username",
+            "password",
+            "role_id"
+          ]
+        }
+      );
+      req.user = newUser;
+      return next();
+    } else if (user.google) {
+      req.user = user;
+      return next();
+    }
+
+    res.status(422);
+    throw new Error("El usuario ya cuenta con ese email registrado");
+
+  } catch (error) {
+    next(error);
+  }
+}
 
 async function authenticate(req, res, next) {
   const username = req.body.username;
@@ -69,6 +120,7 @@ function sendToken(req, res, next) {
 }
 
 module.exports = {
+  authenticateGoogle,
   authenticate,
   generateToken,
   sendToken

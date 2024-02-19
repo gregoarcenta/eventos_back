@@ -124,7 +124,7 @@ module.exports = {
     num_document: {
       isInt: true,
       isLength: {
-        errorMessage: "El documento debe estar entre 10 y 13 digitos",
+        errorMessage: "El numero del documento debe ser de 10 a 13 digitos",
         options: { min: 10, max: 13 },
       },
       notEmpty: {
@@ -162,5 +162,12 @@ module.exports = {
         errorMessage: "La contraseña es requerida",
       },
     },
+  },
+  authGoogleSchema: {
+    tokenGoogle: {
+      notEmpty: {
+        errorMessage: "El token de Google es requerido",
+      },
+    }
   },
 };
