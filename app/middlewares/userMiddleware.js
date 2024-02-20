@@ -19,6 +19,19 @@ exports.verifyUser = async (req, res, next) => {
       throw new Error("Tu cuenta aun no está verificada");
     }
 
+    // console.log("User: ", !!user);
+    if (req.expired) {
+      res.status(400);
+      if (user.google) {
+        throw {
+          ...req.customError,
+          emailGoogle: user.email
+        };
+      } else {
+        next(req.customError);
+      }
+    }
+
     req.user = user;
     next();
   } catch (error) {

@@ -7,9 +7,14 @@ exports.notFound = (req, res, next) => {
 };
 exports.errorHandler = (error, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({
+
+  const objError = {
     status: statusCode,
     message: error.message,
-    stack: process.env.NODE_ENV === "production" ? ":'(" : error.stack,
-  });
+    stack: process.env.NODE_ENV === "production" ? ":'(" : error.stack
+  };
+
+  if (error.emailGoogle) objError.emailGoogle = error.emailGoogle;
+
+  res.status(statusCode).json(objError);
 };
